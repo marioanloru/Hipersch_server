@@ -8,16 +8,12 @@ module.exports = {
     getAll
 };
 
-async function authenticate({ username, password }) {
-    console.log('USERNAME Y PASSWORD: ', username, password);
+async function authenticate({ username, password }) {}
     const user = users.find(u => u.username === username && u.password === password);
     console.log(user);
-    console.log('SECRET::', process.env.SECRET);
     if (user) {
         const token = jwt.sign({ sub: user.id }, process.env.SECRET);
-        console.log('TOKEN GENERADO: ', token);
         const { password, ...userWithoutPassword } = user;
-        console.log('SE HA LLEGADO AQUI:', userWithoutPassword, token);
         return {
             ...userWithoutPassword,
             token
