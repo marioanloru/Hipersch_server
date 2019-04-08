@@ -4,26 +4,23 @@ const jwt = require('jsonwebtoken');
 const users = [{ id: 1, username: 'Admin', password: '1234'}, { id: 2, username: 'User', password: '1234'}];
 
 module.exports = {
-    authenticate,
-    getAll
+    authenticate({ username, password }) {
+        const user = users.find(u => u.username === username && u.password === password);
+        console.log(user);
+        if (user) {
+            const token = jwt.sign({ sub: user.id }, process.env.SECRET);
+            const { password, ...userWithoutPassword } = user;
+            return {
+                ...userWithoutPassword,
+                token
+            };
+        }
+    },
+    getAll() {
+        return users.map(u => {
+            const { password, ...userWithoutPassword } = u;
+            return userWithoutPassword;
+        });
+    }
 };
 
-async function authenticate({ username, password }) {}
-    const user = users.find(u => u.username === username && u.password === password);
-    console.log(user);
-    if (user) {
-        const token = jwt.sign({ sub: user.id }, process.env.SECRET);
-        const { password, ...userWithoutPassword } = user;
-        return {
-            ...userWithoutPassword,
-            token
-        };
-    }
-}
-
-async function getAll() {
-    return users.map(u => {
-        const { password, ...userWithoutPassword } = u;
-        return userWithoutPassword;
-    });
-}

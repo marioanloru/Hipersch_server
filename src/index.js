@@ -1,12 +1,12 @@
-require('rootpath')();
+require('rootpath')('/usr/src/app');
 require('dotenv').config();
 const express = require('express');
 const mongoose = require('mongoose');
 const app = express();
 const cors = require('cors');
 const bodyParser = require('body-parser');
-const jwt = require('_helpers/jwt');
-const errorHandler = require('_helpers/error-handler');
+const jwt = require('./_helpers/jwt');
+const errorHandler = require('./_helpers/error-handler');
 
 mongoose.connect(process.env.MONGODB_URI + ':' + process.env.MONGODB_PORT, {useCreateIndex: true, useNewUrlParser: true});
 const db = mongoose.connection;
