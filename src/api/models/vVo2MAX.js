@@ -10,4 +10,4 @@ const vVo2MAX = new Schema({
 });
 
 
-module.exports = mongoose.model('User', User);
+module.exports = mongoose.model('vVo2MAX', vVo2MAX);

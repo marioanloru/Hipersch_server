@@ -5,6 +5,7 @@ MAINTAINER Mario Antonio Lopez Ruiz <marioanloru@correo.ugr.es>
 WORKDIR /usr/src/app
 
 COPY package.json ./
+COPY .env ./
 
 RUN npm install
 

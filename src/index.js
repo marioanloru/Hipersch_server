@@ -8,7 +8,7 @@ const bodyParser = require('body-parser');
 const jwt = require('./_helpers/jwt');
 const errorHandler = require('./_helpers/error-handler');
 
-mongoose.connect(process.env.MONGODB_URI + ':' + process.env.MONGODB_PORT, {useCreateIndex: true, useNewUrlParser: true});
+mongoose.connect(process.env.MONGODB_URI + ':' + process.env.MONGODB_PORT + '/' + process.env.MONGODB_DB, {useNewUrlParser: true});
 const db = mongoose.connection;
 
 db.once('open', () => {
