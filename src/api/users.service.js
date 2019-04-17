@@ -17,7 +17,7 @@ module.exports = {
         } else {
           console.log(`Buscando por username: ${username} y password ${password}: ` , user);
           if (user && bcrypt.compareSync(password, user.password)) {
-            const token = jwt.sign({ sub: user.id }, process.env.SECRET);
+            const token = jwt.sign({ userId: user.id }, process.env.SECRET);
             res.status(200).json({ token });
           }
         }
@@ -41,7 +41,7 @@ module.exports = {
                   if (err) { 
                     res.status(400).json({ message: 'No se ha podido crear el Usuario' });
                   } else {
-                    return {res};
+                    return req.status(200).json(res);
                   }
               });
           }
