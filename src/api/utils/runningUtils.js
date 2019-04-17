@@ -1,29 +1,36 @@
-const vVo2MAX = require('../models/vVo2MAX');
+const dbUtils = require('./dbUtils');
+const runningTestModel = require('../models/runningTest');
+const clasificationsModel = require('../models/clasifications');
+
 module.exports = {
-  initialize: () => {
-    const excelentWomen = new vVo2MAX({
-      profile: 'running',
-      max: 21.8,
-      min: 20,
-      gender: 'women',
-      clasification: 'excelente'
+  insertTestSixMinutes: (req, res) => {
+    const { distance } = req.params;
+    //const user; VER COMO SE REFERENCIA AL USUARIO POR PETICION
+    
+    const testToInsert = new runningTestModel({
+      distance
+      //athlete
     });
-    const excelentMan = new vVo2MAX({
-      profile: 'running',
-      max: 24,
-      min: 22.2,
-      gender: 'women',
-      clasification: 'excelente'
-    });
-    const docs = [excelentWomen, excelentMan];
-    vVo2MAX
-      .insertMany(docs, (err, res) => {
+
+    runningTestModel
+      .insertOne(testToInsert)
+      .exec((err, data) => {
         if (err) {
-          console.log('Algo ha fallado');
           res.status(500).json(err);
         } else {
-          console.log('OKKK');
-          res.status(200).json(res);
+          res.status(200).json(data);
+        }
+      });
+  },
+  getUserTests: (req, res) => {
+    const { user } = req.params;
+    runningTestModel
+      .findOne(user)
+      .exec((err, data) => {
+        if (err) {
+          res.status(500).json(err);
+        } else {
+          res.status(200).json(data);
         }
       });
   }

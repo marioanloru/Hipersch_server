@@ -1,7 +1,8 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
-const vVo2MAX = new Schema({
+const clasifications = new Schema({
+  aspect: { type: String, required: true },
   profile: { type: String, required: true },
   min: { type: Number, required: true },
   max: { type: Number, required: true },
@@ -10,4 +11,4 @@ const vVo2MAX = new Schema({
 });
 
 
-module.exports = mongoose.model('vVo2MAX', vVo2MAX);
+module.exports = mongoose.model('clasifications', clasifications);
