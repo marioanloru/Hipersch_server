@@ -2,6 +2,7 @@ const dbUtils = require('./dbUtils');
 const runningTestModel = require('../models/runningTest');
 const clasificationsModel = require('../models/clasifications');
 const uuid4 = require('uuid4');
+const percentile = require('percentile');
 
 function processSixMinutesTest(distance, vo2maxIndirect) {
   const speed = distance/360; 
@@ -12,9 +13,9 @@ function processSixMinutesTest(distance, vo2maxIndirect) {
     vat 
   };
   
-  results.MAVvVo2max = percentil(speed, vVo2maxPorGenero) * 10;
-  results.vo2max = percentil(vo2maxIndirect, vo2maxPorGenero) * 10;
-  results.vo2max = percentil((speed*85)/100, vUANPorGenero) * 10;
+  results.MAVvVo2max = percentil(10, speed, vVo2maxPorGenero) * 10;
+  //results.vo2max = percentil(vo2maxIndirect, vo2maxPorGenero) * 10;
+  //results.vo2max = percentil((speed*85)/100, vUANPorGenero) * 10;
 
   return results;
 }
