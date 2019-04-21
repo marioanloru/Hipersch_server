@@ -1,7 +1,6 @@
 const express = require('express');
 const userService = require('./users.service');
 const runningUtils = require('./utils/runningUtils');
-const initializeUtils = require('./utils/initializeUtils');
 const router = express.Router();
 
 
@@ -18,10 +17,6 @@ router
     console.log(req.user);
     res.status(200).json({data: 'Hello world'})
   });
-
-/** BORRAR EN EL FUTURO, SOLO DEBE PODER EL ADMIN */
-router
-  .get('/running/initialize', initializeUtils.initializeRunningTable);
 
 router
   .post('/running/test', runningUtils.insertTestSixMinutes);
