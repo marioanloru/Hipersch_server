@@ -2,7 +2,8 @@ const dbUtils = require('./dbUtils');
 const runningTestModel = require('../models/runningTest');
 const clasificationsModel = require('../models/clasifications');
 const uuid4 = require('uuid4');
-const percentile = require('percentile');
+
+const mavVvO2maxRunningSamples = clasificationModel.find({ aspect: 'vvo2max', profile: 'running' });
 
 function processSixMinutesTest(distance, vo2maxIndirect) {
   const speed = distance/360; 
@@ -14,11 +15,39 @@ function processSixMinutesTest(distance, vo2maxIndirect) {
   };
   
   results.MAVvVo2max = percentil(10, speed, vVo2maxPorGenero) * 10;
+  //results.MAVvVo2max = percentilRank(mavVvO2maxRunningSamples, );
   //results.vo2max = percentil(vo2maxIndirect, vo2maxPorGenero) * 10;
   //results.vo2max = percentil((speed*85)/100, vUANPorGenero) * 10;
 
   return results;
 }
+
+function percentilRank(samples, value, percentage) {
+  let valueInSample = false;
+  let timesUnder = 0;
+  let timesAbove = 0;
+  let res = 0.0; 
+
+  for (let i = 0; i < samples.length; i += 1) {
+    if (samples[i] === value && !valueInSample) {
+      valueInSample = true;
+    } else {
+      if (samples[i] < value) {
+        timesUnder += 1;
+      } else if (samples[i] > value) {
+        timesAbove += 1;
+      }
+    }
+  }
+
+  if (valueInSample) {
+    res = timesUnder / (timesUnder + timesAbove);
+  } else {
+    res = percentilRank(elvalorinferior) + 0.25*(percentilRank(cotainferior) - percentilRank(cotasuperior));
+  }
+    return res;
+}
+
 module.exports = {
   insertTestSixMinutes: (req, res) => {
     const { distance } = req.body;
