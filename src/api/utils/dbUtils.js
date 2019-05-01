@@ -1,5 +1,5 @@
 const clasificationsModel = require('../models/clasifications');
-
+const _ = require('lodash');
 module.exports = {
   initialize: (docs, callback) => {
     clasificationsModel
@@ -57,4 +57,23 @@ module.exports = {
         }
       });
   },
+  getClasificationsBounds: (aspect, profile, gender, callback) => {
+    clasificationsModel
+      .find({ aspect, profile, gender })
+      .exec((err, res) => {
+        if (err) {
+          callback(err);
+        } else {
+          let samples = _.sortBy(res, 'max');
+          let clasificationValues = [];
+          for (let i = 0; i < samples.length; i += 1) {
+            if (samples[i].min !== 0) {
+              clasificationValues.push(samples[i].min);
+            }
+            clasificationValues.push(samples[i].max);
+          }
+          callback(null, {[aspect]: clasificationValues});
+        }
+      });
+  }
 }
