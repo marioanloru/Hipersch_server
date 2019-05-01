@@ -72,7 +72,7 @@ module.exports = {
             }
             clasificationValues.push(samples[i].max);
           }
-          callback(null, {[aspect]: clasificationValues});
+          callback(null, { aspect, samples: clasificationValues });
         }
       });
   }

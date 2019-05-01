@@ -39,43 +39,30 @@ function processSixMinutesTest(distance, gender, vo2maxIndirect, mainCallback) {
       }
     ], (err, res) => {
       console.log('clasification bounds ----> ', res);
-      clasificationsModel
-        .find({ aspect: 'vvo2max', profile: 'running', gender })
-        .exec((err, res) => {
-          if (err) {
-            console.log(res);
-          } else {
-            let samples = _.sortBy(res, 'max');
-            let mavValues = [];
-            for (let i = 0; i < samples.length; i += 1) {
-              if (samples[i].min !== 0) {
-                mavValues.push(samples[i].min);
-              }
-              mavValues.push(samples[i].max);
-            }
-            async.waterfall([
-              (callback) => {
-                results.MAVvVo2max = percentilRank(mavValues, speedKMH) * 10;
-                callback(null);
-              },
-              (callback) => {
-                results.MAVvVo2max = percentilRank(mavValues, speedKMH) * 10;
-                callback(null);
-              },
-              (callback) => {
-                results.MAVvVo2max = percentilRank(mavValues, speedKMH) * 10;
-                callback(null);
-              }
-            ], (err, res) => {
-              console.log('RESULTADOS QUE DEVUELVOO', results);
-              mainCallback(null, results);
-            });
-          }
-        });
+      let samples = _.sortBy(res, 'max');
+      let mavValues = _.find(res, { aspect: 'vvo2max' });
+      console.log('samplesss---->', mavValues)
+      async.waterfall([
+        (callback) => {
+          results.MAVvVo2max = percentilRank(mavValues.samples, speedKMH) * 10;
+          callback(null);
+        },
+        (callback) => {
+          results.MAVvVo2max = percentilRank(mavValues.samples, speedKMH) * 10;
+          callback(null);
+        },
+        (callback) => {
+          results.MAVvVo2max = percentilRank(mavValues.samples, speedKMH) * 10;
+          callback(null);
+        }
+      ], (err, res) => {
+        console.log('RESULTADOS QUE DEVUELVOO', results);
+          //results.vo2max = percentil(vo2maxIndirect, vo2maxPorGenero) * 10;
+          //results.vo2max = percentil((speed*85)/100, vUANPorGenero) * 10;
+        mainCallback(null, results);
+      });
     });
   /** */
-  //results.vo2max = percentil(vo2maxIndirect, vo2maxPorGenero) * 10;
-  //results.vo2max = percentil((speed*85)/100, vUANPorGenero) * 10;
 }
 
 function percentilRank(samples, value) {
