@@ -29,6 +29,16 @@ function processSixMinutesTest(distance, gender, vo2maxIndirect, mainCallback) {
       },
       (callback) => {
         dbUtils
+          .getClasificationsBounds('vo2max', 'running', gender, (err, result) => {
+            if (err) {
+              callback(err);
+            } else {
+              callback(null, result);
+            }
+          });
+      },
+      (callback) => {
+        dbUtils
           .getClasificationsBounds('vuan', 'running', gender, (err, result) => {
             if (err) {
               callback(err);
@@ -38,27 +48,34 @@ function processSixMinutesTest(distance, gender, vo2maxIndirect, mainCallback) {
           });
       }
     ], (err, res) => {
-      console.log('clasification bounds ----> ', res);
       let samples = _.sortBy(res, 'max');
       let mavValues = _.find(res, { aspect: 'vvo2max' });
-      console.log('samplesss---->', mavValues)
+      let vo2Values = _.find(res, { aspect: 'vo2max' });
+      let vuanValues = _.find(res, { aspect: 'vuan' });
+      console.log('MAVVVV', mavValues.samples, speedKMH);
+      console.log('MAVVVV', vo2Values.samples, vo2maxIndirect);
+      console.log('MAVVVV', vuanValues.samples, process.env.UAN);
+
       async.waterfall([
         (callback) => {
+          console.log('ESTOY EN EL PRIMEROO');
           results.MAVvVo2max = percentilRank(mavValues.samples, speedKMH) * 10;
           callback(null);
         },
-        (callback) => {
-          results.MAVvVo2max = percentilRank(mavValues.samples, speedKMH) * 10;
+        /*(callback) => {
+          console.log('ESTOY EN EL SEGUNDOO');
+          results.vo2max = percentilRank(vo2Values.samples, vo2maxIndirect) * 10;
+          console.log('peto aqui');
           callback(null);
-        },
+        },*/
         (callback) => {
-          results.MAVvVo2max = percentilRank(mavValues.samples, speedKMH) * 10;
+          console.log('ESTOY EN EL TERCERO');
+
+          results.vat = percentilRank(vuanValues.samples, process.env.UAN) * 10;
           callback(null);
         }
       ], (err, res) => {
         console.log('RESULTADOS QUE DEVUELVOO', results);
-          //results.vo2max = percentil(vo2maxIndirect, vo2maxPorGenero) * 10;
-          //results.vo2max = percentil((speed*85)/100, vUANPorGenero) * 10;
         mainCallback(null, results);
       });
     });
@@ -108,16 +125,13 @@ function percentilRank(samples, value) {
 
 module.exports = {
   insertTestSixMinutes: (req, res) => {
-    const { distance, gender } = req.body;
-    const { userId } = req.user;
+    const { distance } = req.body;
+    const { userId, gender} = req.user;
     
-    //  AQUI PROCESAR TEST Y OBTENER INFO PARA EL MODELO
-    console.log('ANTES DE INSERTAR EL TEST!!');
-    let result = processSixMinutesTest(distance, gender, null, (err, result) => {
+    let result = processSixMinutesTest(distance, gender, 45.1, (err, result) => {
       if (err) {
         console.log(err);
       } else {
-        console.log('RESULTADO DE INSERTAR PROCESS SIX MINUTES TEST', result);
         const testToInsert = new runningTestModel({
           distance,
           speed: result.speed,
@@ -131,12 +145,11 @@ module.exports = {
             if (err) {
               res.status(500).json(err);
             } else {
-              res.status(200).json(data);
+              res.status(200).json(result);
             }
           });
       }
     });
-
   },
   getUserTests: (req, res) => {
     const { userId } = req.user;

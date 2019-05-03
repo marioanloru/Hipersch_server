@@ -1,5 +1,6 @@
 const clasificationsModel = require('../models/clasifications');
 const _ = require('lodash');
+
 module.exports = {
   initialize: (docs, callback) => {
     clasificationsModel

@@ -17,7 +17,7 @@ module.exports = {
         } else {
           console.log(`Buscando por username: ${username} y password ${password}: ` , user);
           if (user && bcrypt.compareSync(password, user.password)) {
-            const token = jwt.sign({ userId: user.id }, process.env.SECRET);
+            const token = jwt.sign({ username: user.username, gender: user.gender, role: user.role, userId: user.id }, process.env.SECRET);
             res.status(200).json({ token });
           }
         }
