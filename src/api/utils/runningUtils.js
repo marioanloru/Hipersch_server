@@ -62,12 +62,12 @@ function processSixMinutesTest(distance, gender, vo2maxIndirect, mainCallback) {
           results.MAVvVo2max = percentilRank(mavValues.samples, speedKMH) * 10;
           callback(null);
         },
-        /*(callback) => {
+        (callback) => {
           console.log('ESTOY EN EL SEGUNDOO');
           results.vo2max = percentilRank(vo2Values.samples, vo2maxIndirect) * 10;
           console.log('peto aqui');
           callback(null);
-        },*/
+        },
         (callback) => {
           console.log('ESTOY EN EL TERCERO');
 
