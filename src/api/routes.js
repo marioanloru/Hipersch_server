@@ -10,6 +10,7 @@ router
 router
   .post('/register', userService.create);
 
+
 /*router
   .get('/', userService.getAll);*/
 router
@@ -21,6 +22,8 @@ router
 router
   .post('/running/test', runningUtils.insertTestSixMinutes);
 
+router
+  .post('/cycling/test')
 router
   .get('/running/test/:inicio/:fin', runningUtils.getUserTestsByDate);
 
