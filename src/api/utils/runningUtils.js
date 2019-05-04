@@ -105,6 +105,7 @@ module.exports = {
             if (err) {
               res.status(500).json(err);
             } else {
+              result.testId = testToInsert.testId;
               res.status(200).json(result);
             }
           });
