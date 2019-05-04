@@ -1,5 +1,6 @@
 module.exports = {
   percentilRank: (samples, value) => {
+    console.log('SAMPLES RECIBIDOS!!! ', samples, 'Y VALUEEEE', value)
     let valueInSample = false;
     let valuePassed = false;
     let timesUnder = 0;

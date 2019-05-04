@@ -11,9 +11,9 @@ function processSixMinutesTest(distance, gender, vo2maxIndirect, mainCallback) {
   const speedKMH = speedMS * 3.6; 
   const results = {
     speed: speedKMH,
-    'MAVvVo2max': 0,
-    'vo2max': 0,
-    'vat': 0 
+    MAVvVo2max: 0,
+    vo2max: 0,
+    vat: 0 
   };
   /** */
   async
@@ -66,7 +66,8 @@ function processSixMinutesTest(distance, gender, vo2maxIndirect, mainCallback) {
           callback(null);
         },
         (callback) => {
-          results.vat = mathUtils.percentilRank(vuanValues.samples, process.env.UAN) * 10;
+          //  15.3 comes from ergospirometric test
+          results.vat = mathUtils.percentilRank(vuanValues.samples, 15.3) * 10;
           results.vat = Math.round(results.vat * 100)/100;
           callback(null);
         }
@@ -83,13 +84,17 @@ module.exports = {
     const { distance } = req.body;
     const { userId, gender} = req.user;
     
-    let result = processSixMinutesTest(distance, gender, 45.1, (err, result) => {
+    processSixMinutesTest(distance, gender, 45.1, (err, result) => {
       if (err) {
         console.log(err);
       } else {
+        console.log('RESULTADOOO', result);
         const testToInsert = new runningTestModel({
           distance,
           speed: result.speed,
+          MAVvVo2max: result.MAVvVo2max,
+          vo2max: result.vo2max,
+          vat: result.vat,
           athlete: userId,
           testId: uuid4()
         });

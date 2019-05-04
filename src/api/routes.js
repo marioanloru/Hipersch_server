@@ -1,6 +1,7 @@
 const express = require('express');
 const userService = require('./users.service');
 const runningUtils = require('./utils/runningUtils');
+const cyclingUtils = require('./utils/cyclingUtils');
 const router = express.Router();
 
 
@@ -23,7 +24,8 @@ router
   .post('/running/test', runningUtils.insertTestSixMinutes);
 
 router
-  .post('/cycling/test')
+  .post('/cycling/test', cyclingUtils.insertTest);
+
 router
   .get('/running/test/:inicio/:fin', runningUtils.getUserTestsByDate);
 
