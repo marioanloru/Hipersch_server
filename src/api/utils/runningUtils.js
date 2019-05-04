@@ -53,37 +53,27 @@ function processSixMinutesTest(distance, gender, vo2maxIndirect, mainCallback) {
       let mavValues = _.find(res, { aspect: 'vvo2max' });
       let vo2Values = _.find(res, { aspect: 'vo2max' });
       let vuanValues = _.find(res, { aspect: 'vuan' });
-      console.log('MAVVVV', mavValues.samples, speedKMH);
-      console.log('MAVVVV', vo2Values.samples, vo2maxIndirect);
-      console.log('MAVVVV', vuanValues.samples, process.env.UAN);
 
       async.waterfall([
         (callback) => {
-          console.log('ESTOY EN EL PRIMEROO');
           results.MAVvVo2max = mathUtils.percentilRank(mavValues.samples, speedKMH) * 10;
-          results.vo2max = Math.round(results.MAVvVo2max * 100)/100;
+          results.MAVvVo2max = Math.round(results.MAVvVo2max * 100)/100;
           callback(null);
         },
         (callback) => {
-          console.log('ESTOY EN EL SEGUNDOO');
           results.vo2max = mathUtils.percentilRank(vo2Values.samples, vo2maxIndirect) * 10;
           results.vo2max = Math.round(results.vo2max * 100)/100;
-          console.log('peto aqui');
           callback(null);
         },
         (callback) => {
-          console.log('ESTOY EN EL TERCERO');
-
           results.vat = mathUtils.percentilRank(vuanValues.samples, process.env.UAN) * 10;
           results.vat = Math.round(results.vat * 100)/100;
           callback(null);
         }
       ], (err, res) => {
-        console.log('RESULTADOS QUE DEVUELVOO', results);
         mainCallback(null, results);
       });
     });
-  /** */
 }
 
 
