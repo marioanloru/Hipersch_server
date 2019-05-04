@@ -1,4 +1,5 @@
 const dbUtils = require('./dbUtils');
+const mathUtils = require('./mathUtils');
 const runningTestModel = require('../models/runningTest');
 const clasificationsModel = require('../models/clasifications');
 const uuid4 = require('uuid4');
@@ -59,19 +60,22 @@ function processSixMinutesTest(distance, gender, vo2maxIndirect, mainCallback) {
       async.waterfall([
         (callback) => {
           console.log('ESTOY EN EL PRIMEROO');
-          results.MAVvVo2max = percentilRank(mavValues.samples, speedKMH) * 10;
+          results.MAVvVo2max = mathUtils.percentilRank(mavValues.samples, speedKMH) * 10;
+          results.vo2max = Math.round(resulst.MAVvVo2max * 100)/100;
           callback(null);
         },
         (callback) => {
           console.log('ESTOY EN EL SEGUNDOO');
-          results.vo2max = percentilRank(vo2Values.samples, vo2maxIndirect) * 10;
+          results.vo2max = mathUtils.percentilRank(vo2Values.samples, vo2maxIndirect) * 10;
+          results.vo2max = Math.round(resulst.vo2max * 100)/100;
           console.log('peto aqui');
           callback(null);
         },
         (callback) => {
           console.log('ESTOY EN EL TERCERO');
 
-          results.vat = percentilRank(vuanValues.samples, process.env.UAN) * 10;
+          results.vat = mathUtils.percentilRank(vuanValues.samples, process.env.UAN) * 10;
+          results.vat = Math.round(results.vat * 100)/100;
           callback(null);
         }
       ], (err, res) => {
@@ -82,46 +86,7 @@ function processSixMinutesTest(distance, gender, vo2maxIndirect, mainCallback) {
   /** */
 }
 
-function percentilRank(samples, value) {
-  let valueInSample = false;
-  let valuePassed = false;
-  let timesUnder = 0;
-  let timesAbove = 0;
-  let valueAbove = 0;
-  let valueBelow = 0;
-  let res = 0.0; 
 
-  //  Look for value bounds
-  for (let i = 0; i < samples.length; i += 1) {
-    if (samples[i] === value && !valueInSample) {
-      valueInSample = true;
-    } else {
-      if (samples[i] < value) {
-        timesUnder += 1;
-      } else if (samples[i] > value) {
-        if (!valuePassed ) {
-          valuePassed = true;
-          valueAbove = samples[i];
-          if (valueInSample) {
-            valueBelow = samples[i - 2];
-          } else {
-            valueBelow = samples[i - 1];
-          }
-        }
-        timesAbove += 1;
-      }
-    }
-  }
-
-  if (valueInSample) {
-    res = timesUnder / (timesUnder + timesAbove);
-  } else {
-    let percentileBelow = percentilRank(samples, valueBelow);
-    let percentileAbove = percentilRank(samples, valueAbove);
-    res = percentileBelow + 0.25*(percentileAbove - percentileBelow);
-  }
-    return res;
-}
 
 module.exports = {
   insertTestSixMinutes: (req, res) => {
