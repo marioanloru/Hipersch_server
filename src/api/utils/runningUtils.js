@@ -61,13 +61,13 @@ function processSixMinutesTest(distance, gender, vo2maxIndirect, mainCallback) {
         (callback) => {
           console.log('ESTOY EN EL PRIMEROO');
           results.MAVvVo2max = mathUtils.percentilRank(mavValues.samples, speedKMH) * 10;
-          results.vo2max = Math.round(resulst.MAVvVo2max * 100)/100;
+          results.vo2max = Math.round(results.MAVvVo2max * 100)/100;
           callback(null);
         },
         (callback) => {
           console.log('ESTOY EN EL SEGUNDOO');
           results.vo2max = mathUtils.percentilRank(vo2Values.samples, vo2maxIndirect) * 10;
-          results.vo2max = Math.round(resulst.vo2max * 100)/100;
+          results.vo2max = Math.round(results.vo2max * 100)/100;
           console.log('peto aqui');
           callback(null);
         },
