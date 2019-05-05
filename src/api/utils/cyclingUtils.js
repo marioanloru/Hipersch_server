@@ -232,7 +232,7 @@ module.exports = {
     const { peakPower } = req.body;
     const { userId, gender, bodyWeight } = req.user;
     
-    let result = processTest(peakPower, gender, bodyWeight, 'p5min', (err, result) => {
+    let result = processPeakTest(peakPower, gender, bodyWeight, 'p5min', (err, result) => {
       if (err) {
         console.log(err);
       } else {
@@ -262,7 +262,7 @@ module.exports = {
     const { peakPower } = req.body;
     const { userId, gender, bodyWeight } = req.user;
     
-    let result = processTest(peakPower, gender, bodyWeight, 'p60min', (err, result) => {
+    let result = processPeakTest(peakPower, gender, bodyWeight, 'p60min', (err, result) => {
       if (err) {
         console.log(err);
       } else {
