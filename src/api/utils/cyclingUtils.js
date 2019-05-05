@@ -64,37 +64,68 @@ function processTest(pam, puan, puae, gender, mainCallback) {
       let vo2maxValues = _.find(res, { aspect: 'vo2max' });
       let puanValues = _.find(res, { aspect: 'puan' });
       let uanValues = _.find(res, { aspect: 'uan' });
-      console.log('PVO2MAX VALUEEES:: pvo2maxValues' , pvo2maxValues, pam);
-      console.log('PVO2MAX VALUEEES:: vo2maxValues' , vo2maxValues);
-      console.log('PVO2MAX VALUEEES:: puanValues' , puanValues, puan);
-      console.log('PVO2MAX VALUEEES:: uanValues' , uanValues);
 
       //  CALCULO DE PERCENTIL
       async.waterfall([
         (callback) => {
           results.map = mathUtils.percentilRank(pvo2maxValues.samples, pam) * 10;
-          console.log('RANGO PERCENTIL DE MAP:: ', results.map, typeof(results.vo2max));
           results.map = Math.round(results.map * 100)/100;
           callback(null);
         },
         (callback) => {
           results.vo2max = mathUtils.percentilRank(vo2maxValues.samples, 60.5) * 10;
-          console.log('RANGO PERCENTIL DE vo2max:: ', results.vo2max, typeof(results.vo2max));
           results.vo2max = Math.round(results.vo2max * 100)/100;
           callback(null);
         },
         (callback) => {
           results.anaThreshold = mathUtils.percentilRank(puanValues.samples, puan) * 10;
-          console.log('RANGO PERCENTIL DE anaThreshold:: ', results.anaThreshold, typeof(results.anaThreshold));
           results.anaThreshold = Math.round(results.anaThreshold * 100)/100;
           callback(null);
         },
         (callback) => {
           results.at = mathUtils.percentilRank(uanValues.samples, 73) * 10;
-          console.log('RANGO PERCENTIL DE at:: ', results.at, typeof(results.at));
           results.at = Math.round(results.at * 100)/100;
           callback(null);
         }
+      ], (err, res) => {
+        mainCallback(null, results);
+      });
+    });
+}
+
+function processPeakTest(peakPower, gender, bodyWeight, aspect, mainCallback) {
+  //PARAMETROS PARA EL RANGO PERCENTIL
+  const results = {
+    [aspect]: 0
+  };
+  // OBTENCION DE VALORES
+  async
+    .parallel([
+      (callback) => {
+        dbUtils
+          .getClasificationsBounds(aspect, 'cycling', gender, (err, result) => {
+            if (err) {
+              callback(err);
+            } else {
+              callback(null, result);
+            }
+          });
+      },
+    ], (err, res) => {
+      let samples = _.sortBy(res, 'max');
+      let aspectSamples = _.find(res, { aspect });
+      console.log('p5s VALUEEES' , );
+
+      //  CALCULO DE PERCENTIL
+      async.waterfall([
+        (callback) => {
+          console.log('DIVIDO PEAK POWER ENTRE BODYWEIGHT', peakPower, bodyWeight);
+          console.log('PASO VALOR PARA CALCULAR RANGO PERCENTIL::', peakPower/bodyWeight);
+          results[aspect] = mathUtils.percentilRank(aspectSamples.samples, peakPower/bodyWeight) * 10;
+          console.log('RANGO PERCENTIL DE MAP:: ', results[aspect]);
+          results[aspect] = Math.round(results[aspect] * 100)/100;
+          callback(null);
+        },
       ], (err, res) => {
         mainCallback(null, results);
       });
@@ -118,6 +149,128 @@ module.exports = {
           anaThreshold: result.anaThreshold,
           at: result.at,
           athlete: userId,
+          testId: uuid4()
+        });
+        console.log(testToInsert);
+    
+        testToInsert
+          .save((err, data) => {
+            if (err) {
+              res.status(500).json(err);
+            } else {
+              result.testId = testToInsert.testId;
+              res.status(200).json(result);
+            }
+          });
+      }
+    });
+  },
+  //5s
+  insertTestFiveSec: (req, res) => {
+    const { peakPower } = req.body;
+    const { userId, gender, bodyWeight} = req.user;
+    console.log('INFORMACION DEL USUARIO::::', req.user);
+    
+    let result = processPeakTest(peakPower, gender, bodyWeight, 'p5s', (err, result) => {
+      if (err) {
+        console.log(err);
+      } else {
+        console.log('VALORES OBTENIDOS DE PROCESAR EL TEST:: ', result);
+        const testToInsert = new cyclingTestModel({
+          p5s: result.p5s,
+          athlete: userId,
+          type: 'p5sec',
+          testId: uuid4()
+        });
+        console.log(testToInsert);
+    
+        testToInsert
+          .save((err, data) => {
+            if (err) {
+              res.status(500).json(err);
+            } else {
+              result.testId = testToInsert.testId;
+              res.status(200).json(result);
+            }
+          });
+      }
+    });
+  },
+  //1min
+  insertTestOneMin: (req, res) => {
+    const { peakPower } = req.body;
+    const { userId, gender, bodyWeight} = req.user;
+    
+    let result = processPeakTest(peakPower, gender, bodyWeight, 'p1min', (err, result) => {
+      if (err) {
+        console.log(err);
+      } else {
+        console.log('VALORES OBTENIDOS DE PROCESAR EL TEST:: ', result);
+        const testToInsert = new cyclingTestModel({
+          p1min: result.p1min,
+          athlete: userId,
+          type: 'p1min',
+          testId: uuid4()
+        });
+        console.log(testToInsert);
+    
+        testToInsert
+          .save((err, data) => {
+            if (err) {
+              res.status(500).json(err);
+            } else {
+              result.testId = testToInsert.testId;
+              res.status(200).json(result);
+            }
+          });
+      }
+    });
+  },
+  //5min
+  insertTestFiveMin: (req, res) => {
+    console.log('INSERT TEST FIVE MIIINNN')
+    const { peakPower } = req.body;
+    const { userId, gender, bodyWeight } = req.user;
+    
+    let result = processTest(peakPower, gender, bodyWeight, 'p5min', (err, result) => {
+      if (err) {
+        console.log(err);
+      } else {
+        console.log('VALORES OBTENIDOS DE PROCESAR EL TEST:: ', result);
+        const testToInsert = new cyclingTestModel({
+          p5min: result.p5min,
+          athlete: userId,
+          type: 'p5min',
+          testId: uuid4()
+        });
+        console.log(testToInsert);
+    
+        testToInsert
+          .save((err, data) => {
+            if (err) {
+              res.status(500).json(err);
+            } else {
+              result.testId = testToInsert.testId;
+              res.status(200).json(result);
+            }
+          });
+      }
+    });
+  },
+  //60min
+  insertTestSixtyMin: (req, res) => {
+    const { peakPower } = req.body;
+    const { userId, gender, bodyWeight } = req.user;
+    
+    let result = processTest(peakPower, gender, bodyWeight, 'p60min', (err, result) => {
+      if (err) {
+        console.log(err);
+      } else {
+        console.log('VALORES OBTENIDOS DE PROCESAR EL TEST:: ', result);
+        const testToInsert = new cyclingTestModel({
+          p60min: result.p60min,
+          athlete: userId,
+          type: 'p60min',
           testId: uuid4()
         });
         console.log(testToInsert);

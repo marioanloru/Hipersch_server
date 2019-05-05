@@ -27,6 +27,20 @@ router
   .post('/cycling/test', cyclingUtils.insertTest);
 
 router
+  .post('/cycling/test/fivesec', cyclingUtils.insertTestFiveSec);
+
+router
+  .post('/cycling/test/onemin', cyclingUtils.insertTestOneMin);
+
+router
+  .post('/cycling/test/fivemin', cyclingUtils.insertTestFiveMin);
+
+router
+  .post('/cycling/test/sixtymin', cyclingUtils.insertTestSixtyMin);
+
+
+
+router
   .get('/running/test/:inicio/:fin', runningUtils.getUserTestsByDate);
 
 router
