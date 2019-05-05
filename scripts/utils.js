@@ -749,7 +749,434 @@ module.exports = {
             });
         }
       });
+  },
+
+  // CYCLINGK PEAK TABLES
+  initializeCyclingPeakTable: (callback) => {
+    //  p5s
+    const excelentWomenP5s = new clasificationsModel({
+      aspect: 'p5s',
+      profile: 'cycling',
+      max: 18.77,
+      min: 17.91,
+      gender: 'female',
+      clasification: 'excelent'
+    });
+    const veryGoodWomenP5s = new clasificationsModel({
+      aspect: 'p5s',
+      profile: 'cycling',
+      max: 17.05,
+      min: 15.97,
+      gender: 'female',
+      clasification: 'verygood'
+    });
+    const goodWomenP5s = new clasificationsModel({
+      aspect: 'p5s',
+      profile: 'cycling',
+      max: 14.89,
+      min: 13.82,
+      gender: 'female',
+      clasification: 'good'
+    });
+    const averageWomenP5s = new clasificationsModel({
+      aspect: 'p5s',
+      profile: 'cycling',
+      max: 12.74,
+      min: 11.66,
+      gender: 'female',
+      clasification: 'average'
+    });
+    const lowWomenP5s = new clasificationsModel({
+      aspect: 'p5s',
+      profile: 'cycling',
+      max: 10.58,
+      min: 9.51,
+      gender: 'female',
+      clasification: 'low'
+    });
+    const veryLowWomenP5s = new clasificationsModel({
+      aspect: 'p5s',
+      profile: 'cycling',
+      max: 8.43,
+      min: 0,
+      gender: 'female',
+      clasification: 'verylow'
+    });
+    const excelentManP5s = new clasificationsModel({
+      aspect: 'p5s',
+      profile: 'cycling',
+      max: 23.22,
+      min: 22.14,
+      gender: 'male',
+      clasification: 'excelent'
+    });
+    const veryGoodManP5s = new clasificationsModel({
+      aspect: 'p5s',
+      profile: 'cycling',
+      max: 21.05,
+      min: 19.69,
+      gender: 'male',
+      clasification: 'verygood'
+    });
+    const goodManP5s = new clasificationsModel({
+      aspect: 'p5s',
+      profile: 'cycling',
+      max: 18.33,
+      min: 16.97,
+      gender: 'male',
+      clasification: 'good'
+    });
+    const averageManP5s = new clasificationsModel({
+      aspect: 'p5s',
+      profile: 'cycling',
+      max: 15.61,
+      min: 14.25,
+      gender: 'male',
+      clasification: 'average'
+    });
+    const lowManP5s = new clasificationsModel({
+      aspect: 'p5s',
+      profile: 'cycling',
+      max: 12.89,
+      min: 11.53,
+      gender: 'male',
+      clasification: 'low'
+    });
+    const veryLowManP5s = new clasificationsModel({
+      aspect: 'p5s',
+      profile: 'cycling',
+      max: 10.17,
+      min: 0,
+      gender: 'male',
+      clasification: 'verylow'
+    });
+    
+    // p1min
+    const excelentWomenP1min = new clasificationsModel({
+      aspect: 'p1min',
+      profile: 'cycling',
+      max: 9.02,
+      min: 8.66,
+      gender: 'female',
+      clasification: 'excelent'
+    });
+    const veryGoodWomenP1min = new clasificationsModel({
+      aspect: 'p1min',
+      profile: 'cycling',
+      max: 8.29,
+      min: 7.84,
+      gender: 'female',
+      clasification: 'verygood'
+    });
+    const goodWomenP1min = new clasificationsModel({
+      aspect: 'p1min',
+      profile: 'cycling',
+      max: 7.39,
+      min: 6.93,
+      gender: 'female',
+      clasification: 'good'
+    });
+    const averageWomenP1min = new clasificationsModel({
+      aspect: 'p1min',
+      profile: 'cycling',
+      max: 6.48,
+      min: 6.03,
+      gender: 'female',
+      clasification: 'average'
+    });
+    const lowWomenP1min = new clasificationsModel({
+      aspect: 'p1min',
+      profile: 'cycling',
+      max: 5.57,
+      min: 5.12,
+      gender: 'female',
+      clasification: 'low'
+    });
+    const veryLowWomenP1min = new clasificationsModel({
+      aspect: 'p1min',
+      profile: 'cycling',
+      max: 4.67,
+      min: 0,
+      gender: 'female',
+      clasification: 'verylow'
+    });
+    const excelentManP1min = new clasificationsModel({
+      aspect: 'p1min',
+      profile: 'cycling',
+      max: 11.16,
+      min: 10.70,
+      gender: 'male',
+      clasification: 'excelent'
+    });
+    const veryGoodManP1min = new clasificationsModel({
+      aspect: 'p1min',
+      profile: 'cycling',
+      max: 10.24,
+      min: 9.66,
+      gender: 'male',
+      clasification: 'verygood'
+    });
+    const goodManP1min = new clasificationsModel({
+      aspect: 'p1min',
+      profile: 'cycling',
+      max: 9.09,
+      min: 8.51,
+      gender: 'male',
+      clasification: 'good'
+    });
+    const averageManP1min = new clasificationsModel({
+      aspect: 'p1min',
+      profile: 'cycling',
+      max: 7.94,
+      min: 7.36,
+      gender: 'male',
+      clasification: 'average'
+    });
+    const lowManP1min = new clasificationsModel({
+      aspect: 'p1min',
+      profile: 'cycling',
+      max: 6.79,
+      min: 6.21,
+      gender: 'male',
+      clasification: 'low'
+    });
+    const veryLowManP1min = new clasificationsModel({
+      aspect: 'p1min',
+      profile: 'cycling',
+      max: 5.64,
+      min: 0,
+      gender: 'male',
+      clasification: 'verylow'
+    });
+
+    //  p5min
+    const excelentWomenP5min = new clasificationsModel({
+      aspect: 'p5min',
+      profile: 'cycling',
+      max: 6.33,
+      min: 5.96,
+      gender: 'female',
+      clasification: 'excelent'
+    });
+    const veryGoodWomenP5min = new clasificationsModel({
+      aspect: 'p5min',
+      profile: 'cycling',
+      max: 5.59,
+      min: 5.13,
+      gender: 'female',
+      clasification: 'verygood'
+    });
+    const goodWomenP5min = new clasificationsModel({
+      aspect: 'p5min',
+      profile: 'cycling',
+      max: 4.67,
+      min: 4.30,
+      gender: 'female',
+      clasification: 'good'
+    });
+    const averageWomenP5min = new clasificationsModel({
+      aspect: 'p5min',
+      profile: 'cycling',
+      max: 3.74,
+      min: 3.28,
+      gender: 'female',
+      clasification: 'average'
+    });
+    const lowWomenP5min = new clasificationsModel({
+      aspect: 'p5min',
+      profile: 'cycling',
+      max: 2.82,
+      min: 2.35,
+      gender: 'female',
+      clasification: 'low'
+    });
+    const veryLowWomenP5min = new clasificationsModel({
+      aspect: 'p5min',
+      profile: 'cycling',
+      max: 1.89,
+      min: 0,
+      gender: 'female',
+      clasification: 'verylow'
+    });
+    const excelentManP5min = new clasificationsModel({
+      aspect: 'p5min',
+      profile: 'cycling',
+      max: 7.29,
+      min: 6.88,
+      gender: 'male',
+      clasification: 'excelent'
+    });
+    const veryGoodManP5min = new clasificationsModel({
+      aspect: 'p5min',
+      profile: 'cycling',
+      max: 6.47,
+      min: 5.95,
+      gender: 'male',
+      clasification: 'verygood'
+    });
+    const goodManP5min = new clasificationsModel({
+      aspect: 'p5min',
+      profile: 'cycling',
+      max: 5.43,
+      min: 4.90,
+      gender: 'male',
+      clasification: 'good'
+    });
+    const averageManP5min = new clasificationsModel({
+      aspect: 'p5min',
+      profile: 'cycling',
+      max: 4.39,
+      min: 3.87,
+      gender: 'male',
+      clasification: 'average'
+    });
+    const lowManP5min = new clasificationsModel({
+      aspect: 'p5min',
+      profile: 'cycling',
+      max: 3.35,
+      min: 2.84,
+      gender: 'male',
+      clasification: 'low'
+    });
+    const veryLowManP5min = new clasificationsModel({
+      aspect: 'p5min',
+      profile: 'cycling',
+      max: 2.33,
+      min: 0,
+      gender: 'male',
+      clasification: 'verylow'
+    });
+
+    //  p60min
+    const excelentWomenP60min = new clasificationsModel({
+      aspect: 'p60min',
+      profile: 'cycling',
+      max: 5.44,
+      min: 5.12,
+      gender: 'female',
+      clasification: 'excelent'
+    });
+    const veryGoodWomenP60min = new clasificationsModel({
+      aspect: 'p60min',
+      profile: 'cycling',
+      max: 4.79,
+      min: 4.38,
+      gender: 'female',
+      clasification: 'verygood'
+    });
+    const goodWomenP60min = new clasificationsModel({
+      aspect: 'p60min',
+      profile: 'cycling',
+      max: 3.97,
+      min: 3.55,
+      gender: 'female',
+      clasification: 'good'
+    });
+    const averageWomenP60min = new clasificationsModel({
+      aspect: 'p60min',
+      profile: 'cycling',
+      max: 3.14,
+      min: 2.73,
+      gender: 'female',
+      clasification: 'average'
+    });
+    const lowWomenP60min = new clasificationsModel({
+      aspect: 'p60min',
+      profile: 'cycling',
+      max: 2.32,
+      min: 1.91,
+      gender: 'female',
+      clasification: 'low'
+    });
+    const veryLowWomenP60min = new clasificationsModel({
+      aspect: 'p60min',
+      profile: 'cycling',
+      max: 1.50,
+      min: 0,
+      gender: 'female',
+      clasification: 'verylow'
+    });
+    const excelentManP60min = new clasificationsModel({
+      aspect: 'p60min',
+      profile: 'cycling',
+      max: 6.13,
+      min: 5.78,
+      gender: 'male',
+      clasification: 'excelent'
+    });
+    const veryGoodManP60min = new clasificationsModel({
+      aspect: 'p60min',
+      profile: 'cycling',
+      max: 5.42,
+      min: 4.98,
+      gender: 'male',
+      clasification: 'verygood'
+    });
+    const goodManP60min = new clasificationsModel({
+      aspect: 'p60min',
+      profile: 'cycling',
+      max: 4.53,
+      min: 4.09,
+      gender: 'male',
+      clasification: 'good'
+    });
+    const averageManP60min = new clasificationsModel({
+      aspect: 'p60min',
+      profile: 'cycling',
+      max: 3.64,
+      min: 3.20,
+      gender: 'male',
+      clasification: 'average'
+    });
+    const lowManP60min = new clasificationsModel({
+      aspect: 'p60min',
+      profile: 'cycling',
+      max: 2.75,
+      min: 2.31,
+      gender: 'male',
+      clasification: 'low'
+    });
+    const veryLowManP60min = new clasificationsModel({
+      aspect: 'p60min',
+      profile: 'cycling',
+      max: 1.86,
+      min: 0,
+      gender: 'male',
+      clasification: 'verylow'
+    });
+
+    const docs = [excelentWomenP5s, excelentManP5s, veryGoodWomenP5s, veryGoodManP5s, goodWomenP5s, goodManP5s,
+      averageWomenP5s, averageManP5s, lowWomenP5s, lowManP5s, veryLowWomenP5s, veryLowManP5s,
+      excelentWomenP1min, excelentManP1min, veryGoodWomenP1min, veryGoodManP1min, goodWomenP1min, goodManP1min,
+      averageWomenP1min, averageManP1min, lowWomenP1min, lowManP1min, veryLowWomenP1min, veryLowManP1min,
+      excelentWomenP5min, excelentManP5min, veryGoodWomenP5min, veryGoodManP5min, goodWomenP5min, goodManP5min,
+      averageWomenP5min, averageManP5min, lowWomenP5min, lowManP5min, veryLowWomenP5min, veryLowManP5min,
+      excelentWomenP60min, excelentManP60min, veryGoodWomenP60min, veryGoodManP60min, goodWomenP60min, goodManP60min,
+      averageWomenP60min, averageManP60min, lowWomenP60min, lowManP60min, veryLowWomenP60min, veryLowManP60min,
+    ];
+    
+    //  Limpiar base de datos primero si existe algo
+    clasificationsModel
+      .deleteMany({})
+      .exec((err, res) => {
+        if (err) { 
+          console.log('Algo ha fallado: ', err);
+          callback(err);
+        } else {
+          clasificationsModel
+            .insertMany(docs, (errr, res) => {
+              if (err) {
+                console.log('Algo ha fallado');
+                callback(errr);
+              } else {
+                console.log('Modelos de clasificacion de "cyclism peak" insertados');
+                callback(null, res);
+              }
+            });
+        }
+      });
   }
+
   // TODO: Inicializar tabla de natacion
 
 };
