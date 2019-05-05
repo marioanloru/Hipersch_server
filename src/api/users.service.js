@@ -12,7 +12,7 @@ module.exports = {
           res.status(500).json(err);
         } else {
           if (user && bcrypt.compareSync(password, user.password)) {
-            const token = jwt.sign({ username: user.username, gender: user.gender, role: user.role, userId: user.id }, process.env.SECRET);
+            const token = jwt.sign({ username: user.username, gender: user.gender, role: user.role, userId: user.id, bodyWeight: user.bodyWeight }, process.env.SECRET);
             res.status(200).json({ token });
           }
         }
