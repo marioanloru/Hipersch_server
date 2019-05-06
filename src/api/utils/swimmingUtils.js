@@ -6,20 +6,20 @@ const uuid4 = require('uuid4');
 const _ = require('lodash');
 const async = require('async');
 
-function processSixMinutesTest(distance, gender, vo2maxIndirect, mainCallback) {
+function processTest(velocityLT, velocityANAT, gender, height, mainCallback) {
   const speedMS = distance/360;
   const speedKMH = speedMS * 3.6; 
   const results = {
-    speed: speedKMH,
-    MAVvVo2max: 0,
-    vo2max: 0,
-    vat: 0 
+    indexLT: 0,
+    indexANAT: 0,
+    anaThreshold: 0,
+    lactateThreshold: 0 
   };
   async
     .parallel([
       (callback) => {
         dbUtils
-          .getClasificationsBounds('vvo2max', 'running', gender, (err, result) => {
+          .getClasificationsBounds('efficiencylt', 'running', gender, (err, result) => {
             if (err) {
               callback(err);
             } else {
@@ -29,7 +29,7 @@ function processSixMinutesTest(distance, gender, vo2maxIndirect, mainCallback) {
       },
       (callback) => {
         dbUtils
-          .getClasificationsBounds('vo2max', 'running', gender, (err, result) => {
+          .getClasificationsBounds('efficiencyanat', 'swimming', gender, (err, result) => {
             if (err) {
               callback(err);
             } else {
@@ -39,7 +39,17 @@ function processSixMinutesTest(distance, gender, vo2maxIndirect, mainCallback) {
       },
       (callback) => {
         dbUtils
-          .getClasificationsBounds('vuan', 'running', gender, (err, result) => {
+          .getClasificationsBounds('anathreshold', 'swimming', gender, (err, result) => {
+            if (err) {
+              callback(err);
+            } else {
+              callback(null, result);
+            }
+          });
+      },
+      (callback) => {
+        dbUtils
+          .getClasificationsBounds('lactatethreshold', 'swimming', gender, (err, result) => {
             if (err) {
               callback(err);
             } else {
@@ -49,9 +59,11 @@ function processSixMinutesTest(distance, gender, vo2maxIndirect, mainCallback) {
       }
     ], (err, res) => {
       let samples = _.sortBy(res, 'max');
-      let mavValues = _.find(res, { aspect: 'vvo2max' });
-      let vo2Values = _.find(res, { aspect: 'vo2max' });
-      let vuanValues = _.find(res, { aspect: 'vuan' });
+      let indexLTValues = _.find(res, { aspect: 'efficiencylt' });
+      let indexANATValues = _.find(res, { aspect: 'efficiencyanat' });
+      let anaThresholdValues = _.find(res, { aspect: 'anathreshold' });
+      let lactateThresholdValues = _.find(res, { aspect: 'lactatethreshold' });
+
 
       async.waterfall([
         (callback) => {
@@ -79,21 +91,20 @@ function processSixMinutesTest(distance, gender, vo2maxIndirect, mainCallback) {
 
 
 module.exports = {
-  insertTestSixMinutes: (req, res) => {
-    const { distance } = req.body;
-    const { userId, gender} = req.user;
+  insertTest: (req, res) => {
+    const { velocityLT, velocityANAT } = req.body;
+    const { userId, gender, height} = req.user;
     
-    processSixMinutesTest(distance, gender, 45.1, (err, result) => {
+    processTest(velocityLT, velocityANAT, gender, height, (err, result) => {
       if (err) {
         console.log(err);
       } else {
         console.log('RESULTADOOO', result);
-        const testToInsert = new runningTestModel({
-          distance,
-          speed: result.speed,
-          MAVvVo2max: result.MAVvVo2max,
-          vo2max: result.vo2max,
-          vat: result.vat,
+        const testToInsert = new swimmingTestModel({
+          indexLT: result.indexLT,
+          indexANAT: result.indexANAT,
+          anaThreshold: result.anaThreshold,
+          lactateThreshold: result.lactateThreshold,
           athlete: userId,
           testId: uuid4()
         });
@@ -110,32 +121,5 @@ module.exports = {
           });
       }
     });
-  },
-  getUserTests: (req, res) => {
-    const { userId } = req.user;
-    runningTestModel
-      .find({ athlete: userId })
-      .exec((err, data) => {
-        if (err) {
-          res.status(500).json(err);
-        } else {
-          res.status(200).json(data);
-        }
-      });
-  },
-  getUserTestsByDate: (req, res) => {
-    //  Setear busqueda por intervalo de fecha (entre fechas)
-    const { userId } = req.user;
-    const { max, min } = req.params;
-    runningTestModel
-      .find(user)
-      .exec((err, data) => {
-        if (err) {
-          res.status(500).json(err);
-        } else {
-          res.status(200).json(data);
-        }
-      });
   }
-
 }

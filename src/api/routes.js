@@ -2,6 +2,7 @@ const express = require('express');
 const userService = require('./users.service');
 const runningUtils = require('./utils/runningUtils');
 const cyclingUtils = require('./utils/cyclingUtils');
+const swimmingUtils = require('./utils/swimmingUtils');
 const router = express.Router();
 
 
@@ -38,6 +39,8 @@ router
 router
   .post('/cycling/test/sixtymin', cyclingUtils.insertTestSixtyMin);
 
+router
+  .post('/swimming/test', swimmingUtils.insertTest);
 
 
 router
