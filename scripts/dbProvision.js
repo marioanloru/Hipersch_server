@@ -39,6 +39,15 @@ async
           callback(null, res);
         }
       });
+    },
+    (callback) => {
+      initializeUtils.initializeSwimmingTable((err, res) => {
+        if (err) {
+          callback(err);
+        } else {
+          callback(null, res);
+        }
+      });
     }
   ], (err, res) => {
     mongoose.disconnect();

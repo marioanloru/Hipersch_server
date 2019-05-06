@@ -751,7 +751,7 @@ module.exports = {
       });
   },
 
-  // CYCLINGK PEAK TABLES
+  // CYCLING PEAK TABLES
   initializeCyclingPeakTable: (callback) => {
     //  p5s
     const excelentWomenP5s = new clasificationsModel({
@@ -1175,8 +1175,430 @@ module.exports = {
             });
         }
       });
-  }
+  },
+  // Swimming
+  initializeSwimmingTable: (callback) => {
+    //  EfficiencyLt
+    const excelentWomenEfficiencyLt = new clasificationsModel({
+      aspect: 'efficiencylt',
+      profile: 'swimming',
+      max: 0.15,
+      min: 0.4,
+      gender: 'female',
+      clasification: 'excelent'
+    });
+    const veryGoodWomenEfficiencyLt = new clasificationsModel({
+      aspect: 'efficiencylt',
+      profile: 'swimming',
+      max: 0.65,
+      min: 0.9,
+      gender: 'female',
+      clasification: 'verygood'
+    });
+    const goodWomenEfficiencyLt = new clasificationsModel({
+      aspect: 'efficiencylt',
+      profile: 'swimming',
+      max: 1.15,
+      min: 1.4,
+      gender: 'female',
+      clasification: 'good'
+    });
+    const averageWomenEfficiencyLt = new clasificationsModel({
+      aspect: 'efficiencylt',
+      profile: 'swimming',
+      max: 1.65,
+      min: 1.9,
+      gender: 'female',
+      clasification: 'average'
+    });
+    const lowWomenEfficiencyLt = new clasificationsModel({
+      aspect: 'efficiencylt',
+      profile: 'swimming',
+      max: 2.15,
+      min: 2.4,
+      gender: 'female',
+      clasification: 'low'
+    });
+    const veryLowWomenEfficiencyLt = new clasificationsModel({
+      aspect: 'efficiencylt',
+      profile: 'swimming',
+      max: 2.65,
+      min: 0,
+      gender: 'female',
+      clasification: 'verylow'
+    });
+    const excelentManEfficiencyLt = new clasificationsModel({
+      aspect: 'efficiencylt',
+      profile: 'swimming',
+      max: 0.15,
+      min: 0.4,
+      gender: 'male',
+      clasification: 'excelent'
+    });
+    const veryGoodManEfficiencyLt = new clasificationsModel({
+      aspect: 'efficiencylt',
+      profile: 'swimming',
+      max: 0.65,
+      min: 0.9,
+      gender: 'male',
+      clasification: 'verygood'
+    });
+    const goodManEfficiencyLt = new clasificationsModel({
+      aspect: 'efficiencylt',
+      profile: 'swimming',
+      max: 1.15,
+      min: 1.4,
+      gender: 'male',
+      clasification: 'good'
+    });
+    const averageManEfficiencyLt = new clasificationsModel({
+      aspect: 'efficiencylt',
+      profile: 'swimming',
+      max: 1.65,
+      min: 1.9,
+      gender: 'male',
+      clasification: 'average'
+    });
+    const lowManEfficiencyLt = new clasificationsModel({
+      aspect: 'efficiencylt',
+      profile: 'swimming',
+      max: 2.15,
+      min: 2.4,
+      gender: 'male',
+      clasification: 'low'
+    });
+    const veryLowManEfficiencyLt = new clasificationsModel({
+      aspect: 'efficiencylt',
+      profile: 'swimming',
+      max: 2.65,
+      min: 0,
+      gender: 'male',
+      clasification: 'verylow'
+    });
 
-  // TODO: Inicializar tabla de natacion
+    //  EfficiencyAnat
+    const excelentWomenEfficiencyAnat = new clasificationsModel({
+      aspect: 'efficiencyanat',
+      profile: 'swimming',
+      max: 0.2,
+      min: 0.4,
+      gender: 'female',
+      clasification: 'excelent'
+    });
+    const veryGoodWomenEfficiencyAnat = new clasificationsModel({
+      aspect: 'efficiencyanat',
+      profile: 'swimming',
+      max: 0.65,
+      min: 0.9,
+      gender: 'female',
+      clasification: 'verygood'
+    });
+    const goodWomenEfficiencyAnat = new clasificationsModel({
+      aspect: 'efficiencyanat',
+      profile: 'swimming',
+      max: 1.15,
+      min: 1.4,
+      gender: 'female',
+      clasification: 'good'
+    });
+    const averageWomenEfficiencyAnat = new clasificationsModel({
+      aspect: 'efficiencyanat',
+      profile: 'swimming',
+      max: 1.65,
+      min: 1.9,
+      gender: 'female',
+      clasification: 'average'
+    });
+    const lowWomenEfficiencyAnat = new clasificationsModel({
+      aspect: 'efficiencyanat',
+      profile: 'swimming',
+      max: 2.15,
+      min: 2.4,
+      gender: 'female',
+      clasification: 'low'
+    });
+    const veryLowWomenEfficiencyAnat = new clasificationsModel({
+      aspect: 'efficiencyanat',
+      profile: 'swimming',
+      max: 2.65,
+      min: 0,
+      gender: 'female',
+      clasification: 'verylow'
+    });
+    const excelentManEfficiencyAnat = new clasificationsModel({
+      aspect: 'efficiencyanat',
+      profile: 'swimming',
+      max: 0.2,
+      min: 0.4,
+      gender: 'male',
+      clasification: 'excelent'
+    });
+    const veryGoodManEfficiencyAnat = new clasificationsModel({
+      aspect: 'efficiencyanat',
+      profile: 'swimming',
+      max: 0.65,
+      min: 0.9,
+      gender: 'male',
+      clasification: 'verygood'
+    });
+    const goodManEfficiencyAnat = new clasificationsModel({
+      aspect: 'efficiencyanat',
+      profile: 'swimming',
+      max: 1.15,
+      min: 1.4,
+      gender: 'male',
+      clasification: 'good'
+    });
+    const averageManEfficiencyAnat = new clasificationsModel({
+      aspect: 'efficiencyanat',
+      profile: 'swimming',
+      max: 1.65,
+      min: 1.9,
+      gender: 'male',
+      clasification: 'average'
+    });
+    const lowManEfficiencyAnat = new clasificationsModel({
+      aspect: 'efficiencyanat',
+      profile: 'swimming',
+      max: 2.15,
+      min: 2.4,
+      gender: 'male',
+      clasification: 'low'
+    });
+    const veryLowManEfficiencyAnat = new clasificationsModel({
+      aspect: 'efficiencyanat',
+      profile: 'swimming',
+      max: 2.65,
+      min: 0,
+      gender: 'male',
+      clasification: 'verylow'
+    });
+    
+    //  AnaThreshold
+    const excelentWomenAnaThreshold = new clasificationsModel({
+      aspect: 'anathreshold',
+      profile: 'swimming',
+      max: 1.68,
+      min: 1.58,
+      gender: 'female',
+      clasification: 'excelent'
+    });
+    const veryGoodWomenAnaThreshold = new clasificationsModel({
+      aspect: 'anathreshold',
+      profile: 'swimming',
+      max: 1.48,
+      min: 1.38,
+      gender: 'female',
+      clasification: 'verygood'
+    });
+    const goodWomenAnaThreshold = new clasificationsModel({
+      aspect: 'anathreshold',
+      profile: 'swimming',
+      max: 1.28,
+      min: 1.18,
+      gender: 'female',
+      clasification: 'good'
+    });
+    const averageWomenAnaThreshold = new clasificationsModel({
+      aspect: 'anathreshold',
+      profile: 'swimming',
+      max: 1.08,
+      min: 0.98,
+      gender: 'female',
+      clasification: 'average'
+    });
+    const lowWomenAnaThreshold = new clasificationsModel({
+      aspect: 'anathreshold',
+      profile: 'swimming',
+      max: 0.88,
+      min: 0.78,
+      gender: 'female',
+      clasification: 'low'
+    });
+    const veryLowWomenAnaThreshold = new clasificationsModel({
+      aspect: 'anathreshold',
+      profile: 'swimming',
+      max: 0.68,
+      min: 0,
+      gender: 'female',
+      clasification: 'verylow'
+    });
+    const excelentManAnaThreshold = new clasificationsModel({
+      aspect: 'anathreshold',
+      profile: 'swimming',
+      max: 1.82,
+      min: 1.72,
+      gender: 'male',
+      clasification: 'excelent'
+    });
+    const veryGoodManAnaThreshold = new clasificationsModel({
+      aspect: 'anathreshold',
+      profile: 'swimming',
+      max: 1.62,
+      min: 1.52,
+      gender: 'male',
+      clasification: 'verygood'
+    });
+    const goodManAnaThreshold = new clasificationsModel({
+      aspect: 'anathreshold',
+      profile: 'swimming',
+      max: 1.42,
+      min: 1.32,
+      gender: 'male',
+      clasification: 'good'
+    });
+    const averageManAnaThreshold = new clasificationsModel({
+      aspect: 'anathreshold',
+      profile: 'swimming',
+      max: 1.22,
+      min: 1.12,
+      gender: 'male',
+      clasification: 'average'
+    });
+    const lowManAnaThreshold = new clasificationsModel({
+      aspect: 'anathreshold',
+      profile: 'swimming',
+      max: 1.02,
+      min: 0.92,
+      gender: 'male',
+      clasification: 'low'
+    });
+    const veryLowManAnaThreshold = new clasificationsModel({
+      aspect: 'anathreshold',
+      profile: 'swimming',
+      max: 0.82,
+      min: 0,
+      gender: 'male',
+      clasification: 'verylow'
+    });
 
+    //  LactateThreshold
+    const excelentWomenLactateThreshold = new clasificationsModel({
+      aspect: 'lactatethreshold',
+      profile: 'swimming',
+      max: 1.45,
+      min: 1.35,
+      gender: 'female',
+      clasification: 'excelent'
+    });
+    const veryGoodWomenLactateThreshold = new clasificationsModel({
+      aspect: 'lactatethreshold',
+      profile: 'swimming',
+      max: 1.25,
+      min: 1.15,
+      gender: 'female',
+      clasification: 'verygood'
+    });
+    const goodWomenLactateThreshold = new clasificationsModel({
+      aspect: 'lactatethreshold',
+      profile: 'swimming',
+      max: 1.05,
+      min: 0.95,
+      gender: 'female',
+      clasification: 'good'
+    });
+    const averageWomenLactateThreshold = new clasificationsModel({
+      aspect: 'lactatethreshold',
+      profile: 'swimming',
+      max: 0.85,
+      min: 0.75,
+      gender: 'female',
+      clasification: 'average'
+    });
+    const lowWomenLactateThreshold = new clasificationsModel({
+      aspect: 'lactatethreshold',
+      profile: 'swimming',
+      max: 0.65,
+      min: 0.55,
+      gender: 'female',
+      clasification: 'low'
+    });
+    const veryLowWomenLactateThreshold = new clasificationsModel({
+      aspect: 'lactatethreshold',
+      profile: 'swimming',
+      max: 0.45,
+      min: 0,
+      gender: 'female',
+      clasification: 'verylow'
+    });
+    const excelentManLactateThreshold = new clasificationsModel({
+      aspect: 'lactatethreshold',
+      profile: 'swimming',
+      max: 1.50,
+      min: 1.40,
+      gender: 'male',
+      clasification: 'excelent'
+    });
+    const veryGoodManLactateThreshold = new clasificationsModel({
+      aspect: 'lactatethreshold',
+      profile: 'swimming',
+      max: 1.30,
+      min: 1.20,
+      gender: 'male',
+      clasification: 'verygood'
+    });
+    const goodManLactateThreshold = new clasificationsModel({
+      aspect: 'lactatethreshold',
+      profile: 'swimming',
+      max: 1.10,
+      min: 1.00,
+      gender: 'male',
+      clasification: 'good'
+    });
+    const averageManLactateThreshold = new clasificationsModel({
+      aspect: 'lactatethreshold',
+      profile: 'swimming',
+      max: 0.90,
+      min: 0.80,
+      gender: 'male',
+      clasification: 'average'
+    });
+    const lowManLactateThreshold = new clasificationsModel({
+      aspect: 'lactatethreshold',
+      profile: 'swimming',
+      max: 0.70,
+      min: 0.60,
+      gender: 'male',
+      clasification: 'low'
+    });
+    const veryLowManLactateThreshold = new clasificationsModel({
+      aspect: 'lactatethreshold',
+      profile: 'swimming',
+      max: 0.50,
+      min: 0,
+      gender: 'male',
+      clasification: 'verylow'
+    });
+
+    const docs = [excelentWomenEfficiencyLt, excelentManEfficiencyLt, veryGoodWomenEfficiencyLt, veryGoodManEfficiencyLt, goodWomenEfficiencyLt,
+      goodManEfficiencyLt, averageWomenEfficiencyLt, averageManEfficiencyLt, lowWomenEfficiencyLt, lowManEfficiencyLt, veryLowWomenEfficiencyLt, veryLowManEfficiencyLt,
+      excelentWomenEfficiencyAnat, excelentManEfficiencyAnat, veryGoodWomenEfficiencyAnat, veryGoodManEfficiencyAnat, goodWomenEfficiencyAnat,
+      goodManEfficiencyAnat, averageWomenEfficiencyAnat, averageManEfficiencyAnat, lowWomenEfficiencyAnat, lowManEfficiencyAnat, veryLowWomenEfficiencyAnat, veryLowManEfficiencyAnat,
+      excelentWomenAnaThreshold, excelentManAnaThreshold, veryGoodWomenAnaThreshold, veryGoodManAnaThreshold, goodWomenAnaThreshold, goodManAnaThreshold,
+      averageWomenAnaThreshold, averageManAnaThreshold, lowWomenAnaThreshold, lowManAnaThreshold, veryLowWomenAnaThreshold, veryLowManAnaThreshold,
+      excelentWomenLactateThreshold, excelentManLactateThreshold, veryGoodWomenLactateThreshold, veryGoodManLactateThreshold, goodWomenLactateThreshold,
+      goodManLactateThreshold, averageWomenLactateThreshold, averageManLactateThreshold, lowWomenLactateThreshold, lowManLactateThreshold,
+      veryLowWomenLactateThreshold, veryLowManLactateThreshold];
+    
+    //  Limpiar base de datos primero si existe algo
+    clasificationsModel
+      .deleteMany({})
+      .exec((err, res) => {
+        if (err) { 
+          console.log('Algo ha fallado: ', err);
+          callback(err);
+        } else {
+          clasificationsModel
+            .insertMany(docs, (errr, res) => {
+              if (err) {
+                console.log('Algo ha fallado');
+                callback(errr);
+              } else {
+                console.log('Modelos de clasificacion de natacion insertado');
+                callback(null, res);
+              }
+            });
+        }
+      });
+  },
 };
