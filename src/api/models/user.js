@@ -8,6 +8,7 @@ const User = new Schema({
   lastName: { type: String, required: true },
   gender: { type: String, required: true },
   bodyWeight: { type: Number, required: true },
+  height: { type: Number, required: true },
   createdDate: { type: Date, default: Date.now },
   role: { type: String }
 });
