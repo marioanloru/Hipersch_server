@@ -1,4 +1,4 @@
-require('rootpath')('/usr/src/app');
+//require('rootpath')('/usr/src/app');
 require('dotenv').config();
 const express = require('express');
 const mongoose = require('mongoose');
@@ -8,7 +8,11 @@ const bodyParser = require('body-parser');
 const jwt = require('./_helpers/jwt');
 const errorHandler = require('./_helpers/error-handler');
 
-mongoose.connect(process.env.MONGODB_URI + ':' + process.env.MONGODB_PORT + '/' + process.env.MONGODB_DB, {useNewUrlParser: true});
+if (process.env.ENVIRONMENT === 'test') {
+  mongoose.connect(process.env.MONGODB_TEST_URI + ':' + process.env.MONGODB_PORT + '/' + process.env.MONGODB_DB, {useNewUrlParser: true});
+} else {
+  mongoose.connect(process.env.MONGODB_URI + ':' + process.env.MONGODB_PORT + '/' + process.env.MONGODB_DB, {useNewUrlParser: true});
+}
 const db = mongoose.connection;
 
 db.once('open', () => {
@@ -34,3 +38,5 @@ const port = process.env.NODE_ENV === 'production' ? 80 : 9000;
 const server = app.listen(port, function () {
     console.log('Server listening on port ' + port);
 });
+
+module.exports = app;

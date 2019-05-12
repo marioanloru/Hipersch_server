@@ -12,9 +12,6 @@ router
 router
   .post('/register', userService.create);
 
-
-/*router
-  .get('/', userService.getAll);*/
 router
   .get('/', (req, res) => {
     console.log(req.user);
