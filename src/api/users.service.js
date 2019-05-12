@@ -19,7 +19,7 @@ module.exports = {
       });
     },
   create(req, res) {
-    const { username, password, lastName, firstName, gender, bodyWeight } = req.body;
+    const { username, password, lastName, firstName, gender, bodyWeight, height } = req.body;
     userModel
         .findOne({ username })
         .exec((err, user) => {
@@ -28,7 +28,7 @@ module.exports = {
             res.status(200).json({ message: 'El usuario ya existe' });
           } else {
               const hashedPassword = bcrypt.hashSync(password, 10);
-              const user = new userModel({ username, password: hashedPassword, lastName, firstName, bodyWeight, gender, role: 'user'});
+              const user = new userModel({ username, password: hashedPassword, lastName, firstName, bodyWeight, height, gender, role: 'user'});
                 user
                 .save((err, result) => {
                     if (err) { 
