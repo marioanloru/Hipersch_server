@@ -1,14 +1,14 @@
 const dbUtils = require('./dbUtils');
 const mathUtils = require('./mathUtils');
-const runningTestModel = require('../models/runningTest');
+const swimmingTestModel = require('../models/swimmingTest');
 const clasificationsModel = require('../models/clasifications');
 const uuid4 = require('uuid4');
 const _ = require('lodash');
 const async = require('async');
 
 function processTest(velocityLT, velocityANAT, gender, height, mainCallback) {
-  const speedMS = distance/360;
-  const speedKMH = speedMS * 3.6; 
+  const distance = 200;
+
   const results = {
     indexLT: 0,
     indexANAT: 0,
@@ -19,7 +19,7 @@ function processTest(velocityLT, velocityANAT, gender, height, mainCallback) {
     .parallel([
       (callback) => {
         dbUtils
-          .getClasificationsBounds('efficiencylt', 'running', gender, (err, result) => {
+          .getClasificationsBounds('efficiencylt', 'swimming', gender, (err, result) => {
             if (err) {
               callback(err);
             } else {
@@ -67,19 +67,27 @@ function processTest(velocityLT, velocityANAT, gender, height, mainCallback) {
 
       async.waterfall([
         (callback) => {
-          results.MAVvVo2max = mathUtils.percentilRank(mavValues.samples, speedKMH) * 10;
-          results.MAVvVo2max = Math.round(results.MAVvVo2max * 100)/100;
+          let ltTime = distance / velocityLT;
+          let efficiencyIndex = ltTime / ((distance * 100) / height);
+          results.indexLT = mathUtils.percentilRank(indexLTValues.samples, efficiencyIndex) * 10;
+          results.indexLT = Math.round(results.indexLT * 100)/100;
           callback(null);
         },
         (callback) => {
-          results.vo2max = mathUtils.percentilRank(vo2Values.samples, vo2maxIndirect) * 10;
-          results.vo2max = Math.round(results.vo2max * 100)/100;
+          let anatTime = distance / velocityANAT;
+          let efficiencyIndex = anatTime / ((distance * 100) / height);
+          results.indexANAT = mathUtils.percentilRank(indexANATValues.samples, efficiencyIndex) * 10;
+          results.indexANAT = Math.round(results.indexANAT * 100)/100;
           callback(null);
         },
         (callback) => {
-          //  15.3 comes from ergospirometric test
-          results.vat = mathUtils.percentilRank(vuanValues.samples, 15.3) * 10;
-          results.vat = Math.round(results.vat * 100)/100;
+          results.anaThreshold = mathUtils.percentilRank(anaThresholdValues.samples, velocityANAT) * 10;
+          results.anaThreshold = Math.round(results.anaThreshold * 100)/100;
+          callback(null);
+        },
+        (callback) => {
+          results.lactateThreshold = mathUtils.percentilRank(lactateThresholdValues.samples, velocityLT) * 10;
+          results.lactateThreshold = Math.round(results.lactateThreshold * 100)/100;
           callback(null);
         }
       ], (err, res) => {
@@ -99,7 +107,6 @@ module.exports = {
       if (err) {
         console.log(err);
       } else {
-        console.log('RESULTADOOO', result);
         const testToInsert = new swimmingTestModel({
           indexLT: result.indexLT,
           indexANAT: result.indexANAT,

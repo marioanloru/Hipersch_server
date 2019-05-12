@@ -9,7 +9,6 @@ module.exports = {
             console.log('Algo ha fallado');
             callback(err);
           } else {
-            console.log('OKKK');
             callback(null, res);
           }
         });

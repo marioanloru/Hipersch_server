@@ -1,6 +1,5 @@
 module.exports = {
   percentilRank: (samples, value) => {
-    console.log('SAMPLES RECIBIDOS!!! ', samples, 'Y VALUEEEE', value)
     let valueInSample = false;
     let valuePassed = false;
     let timesUnder = 0;
@@ -37,7 +36,6 @@ module.exports = {
       let percentileBelow = module.exports.percentilRank(samples, valueBelow);
       let percentileAbove = module.exports.percentilRank(samples, valueAbove);
       let valueInterpolated = module.exports.linearInterpolation(valueBelow, value, valueAbove, 0, 100) / 100;
-      console.log('VALOR INTERPOLADOOOOOO', valueInterpolated)
       res = percentileBelow + valueInterpolated *(percentileAbove - percentileBelow);
     }
       return res;

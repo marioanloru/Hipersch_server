@@ -87,7 +87,6 @@ module.exports = {
       if (err) {
         console.log(err);
       } else {
-        console.log('RESULTADOOO', result);
         const testToInsert = new runningTestModel({
           distance,
           speed: result.speed,

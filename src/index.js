@@ -12,7 +12,7 @@ mongoose.connect(process.env.MONGODB_URI + ':' + process.env.MONGODB_PORT + '/' 
 const db = mongoose.connection;
 
 db.once('open', () => {
-  console.log('CONECTADO A LA BASE DE DATOS!');
+  console.log('Connected to DB');
 });
 db.on('error', console.error.bind(console, 'connection error:'));
 
