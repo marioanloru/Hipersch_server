@@ -1,5 +1,4 @@
 const assert = require('assert');
-const request = require('request');
 
 const mathUtils = require('../src/api/utils/mathUtils');
 const runningUtils = require('../src/api/utils/runningUtils');
