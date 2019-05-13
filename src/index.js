@@ -1,4 +1,3 @@
-//require('rootpath')('/usr/src/app');
 require('dotenv').config();
 const express = require('express');
 const mongoose = require('mongoose');
@@ -8,8 +7,8 @@ const bodyParser = require('body-parser');
 const jwt = require('./_helpers/jwt');
 const errorHandler = require('./_helpers/error-handler');
 
-if (process.env.ENVIRONMENT === 'test') {
-  mongoose.connect(process.env.MONGODB_TEST_URI + ':' + process.env.MONGODB_PORT + '/' + process.env.MONGODB_DB, {useNewUrlParser: true});
+if (process.env.ENVIRONMENT === 'develop') {
+  mongoose.connect(process.env.MONGODB_TEST_URI, {useNewUrlParser: true});
 } else {
   mongoose.connect(process.env.MONGODB_URI + ':' + process.env.MONGODB_PORT + '/' + process.env.MONGODB_DB, {useNewUrlParser: true});
 }
