@@ -20,10 +20,12 @@ module.exports = {
       });
     },
   create(req, res) {
+    console.log('DENTRO DE FUNCION CREATE');
     const { username, password, lastName, firstName, gender, bodyWeight, height, role} = req.body;
     userModel
       .findOne({ username })
       .exec((err, user) => {
+        console.log('HE ENCONTRADO EL USUARIO', username);
         //  Usuario ya existe
         if (user) {
           res.status(200).json({ message: 'User already created' });
