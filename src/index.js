@@ -29,12 +29,15 @@ app.use(jwt());
 
 // api routes
 //app.use('/api', require('./api/api.controller'));
+app.get('/', (req, res) => {
+  res.status(200).send({ message: 'Hello world'});
+});
 app.use('/api', require('./api/routes'));
 // global error handler
 app.use(errorHandler);
 
 // start server
-const port = process.env.PORT ||  9000;
+const port = process.env.PORT || 9000;
 const server = app.listen(port, function () {
     console.log('Server listening on port ' + port);
 });

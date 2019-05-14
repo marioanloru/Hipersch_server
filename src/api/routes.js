@@ -7,16 +7,19 @@ const router = express.Router();
 
 
 router
-  .post('/login', userService.authenticate);
-
-router
-  .post('/register', userService.create);
-
-router
   .get('/', (req, res) => {
     console.log(req.user);
-    res.status(200).json({data: 'Hello world'})
+    res.status(200).json({ message: 'Everything up and working'});
   });
+
+router
+  .post('/user/login', userService.authenticate);
+
+router
+  .post('/user/register', userService.create);
+
+router
+  .post('/user/delete', userService.delete);
 
 router
   .post('/running/test', runningUtils.insertTestSixMinutes);
