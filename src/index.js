@@ -7,13 +7,12 @@ const bodyParser = require('body-parser');
 const jwt = require('./_helpers/jwt');
 const errorHandler = require('./_helpers/error-handler');
 
-mongoose.connect(process.env.MONGODB_URI, { useNewUrlParser: true });
-/*if (process.env.ENVIRONMENT === 'develop') {
+if (process.env.ENVIRONMENT === 'develop') {
   console.log(process.env.MONGODB_URI);
-  mongoose.connect(process.env.MONGODB_URI, {useNewUrlParser: true});
 } else {
   mongoose.connect(process.env.MONGODB_URI + ':' + process.env.MONGODB_PORT + '/' + process.env.MONGODB_DB, {useNewUrlParser: true});
-}*/
+}
+
 const db = mongoose.connection;
 
 db.once('open', () => {
