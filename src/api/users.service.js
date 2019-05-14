@@ -29,7 +29,7 @@ module.exports = {
           res.status(200).json({ message: 'User already created' });
         } else {
           
-          if ((role === 'aaaaaadmin') && (req.user.role !== 'admin')) {
+          if ((role === 'admin') && (req.user.role !== 'admin')) {
             res.status(400).json('You do not have permissions for this action. This action will be reported');
           } else {
             const hashedPassword = bcrypt.hashSync(password, 10);
