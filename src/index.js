@@ -7,17 +7,23 @@ const bodyParser = require('body-parser');
 const jwt = require('./_helpers/jwt');
 const errorHandler = require('./_helpers/error-handler');
 
+console.log('Environment: ', process.env.ENVIRONMENT);
 if (process.env.ENVIRONMENT === 'develop') {
-  console.log(process.env.MONGODB_URI);
+  mongoose.connect(process.env.MONGODB_URI, { useNewUrlParser: true });
 } else {
   mongoose.connect(process.env.MONGODB_URI + ':' + process.env.MONGODB_PORT + '/' + process.env.MONGODB_DB, {useNewUrlParser: true});
 }
 
 const db = mongoose.connection;
 
-db.once('open', () => {
-  console.log('Connected to DB');
+db.on('connecting', () => {
+  console.log('Connecting to mongo database');
 });
+
+db.on('open', () => {
+  console.log('Connected to mongo database');
+});
+
 db.on('error', (err) => {
   console.log('Error on mongo connection');
 });
@@ -29,11 +35,10 @@ app.use(cors());
 // use JWT auth to secure the api
 app.use(jwt());
 
-// api routes
-//app.use('/api', require('./api/api.controller'));
 app.get('/', (req, res) => {
   res.status(200).send({ message: 'Hello world'});
 });
+// api routes
 app.use('/api', require('./api/routes'));
 // global error handler
 app.use(errorHandler);
