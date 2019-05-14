@@ -12,7 +12,7 @@ function jwt() {
             '/api/user/login',
             '/api/user/register',
             '/',
-            'api'
+            '/api'
         ]
     });
 }
