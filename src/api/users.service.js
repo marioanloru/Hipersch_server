@@ -5,7 +5,6 @@ const bcrypt = require('bcryptjs');
 module.exports = {
   authenticate(req, res) {
     const { username, password } = req.body;
-    console.log('LO QUE SE HA RECIBIDO!!! :', username, password);
     userModel
       .findOne({ username })
       .exec((err, user) => {
