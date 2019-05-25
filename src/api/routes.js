@@ -7,7 +7,7 @@ const router = express.Router();
 
 
 router
-  .get('/', (req, res) => {
+  .get('/status', (req, res) => {
     console.log(req.user);
     res.status(200).json({ message: 'Everything up and working'});
   });
