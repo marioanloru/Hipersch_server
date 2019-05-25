@@ -4,15 +4,15 @@ const bcrypt = require('bcryptjs');
 
 module.exports = {
   authenticate(req, res) {
-    const { username, password } = req.body;
+    const { email, password } = req.body;
     userModel
-      .findOne({ username })
+      .findOne({ email })
       .exec((err, user) => {
         if (err) {
           res.status(500).json(err);
         } else {
           if (user && bcrypt.compareSync(password, user.password)) {
-            const token = jwt.sign({ username: user.username, gender: user.gender, role: user.role, userId: user.id, bodyWeight: user.bodyWeight, height: user.height }, process.env.SECRET);
+            const token = jwt.sign({ email: user.email, gender: user.gender, role: user.role, userId: user.id, bodyWeight: user.bodyWeight, height: user.height }, process.env.SECRET);
             res.status(200).json({ token });
           } else {
             res.status(400).json({ message: 'Login credentials incorrect' });
@@ -21,10 +21,10 @@ module.exports = {
       });
     },
   create(req, res) {
-    const { username, password, lastName, firstName, gender, bodyWeight, height} = req.body;
+    const { email, password, lastName, firstName, gender, bodyWeight, height} = req.body;
     const role = req.body.role || 'athlete'; // Default role value
     userModel
-      .findOne({ username })
+      .findOne({ email })
       .exec((err, user) => {
         //  Usuario ya existe
         if (user) {
@@ -36,7 +36,7 @@ module.exports = {
           } else {
             if (role === 'athlete' || role === 'trainer') {
               const hashedPassword = bcrypt.hashSync(password, 10);
-              const user = new userModel({ username, password: hashedPassword, lastName, firstName, bodyWeight, height, gender, role});
+              const user = new userModel({ email, password: hashedPassword, lastName, firstName, bodyWeight, height, gender, role});
                 user
                 .save((err, result) => {
                     if (err) { 
@@ -54,10 +54,10 @@ module.exports = {
       });
   },
   delete(req, res) {
-    const { username } = req.body;
+    const { email } = req.body;
     if (req.user.role === 'admin') {
       userModel
-        .deleteOne({ username })
+        .deleteOne({ email })
         .exec((err, result) => {
           if (err) { 
             console.log('Could not delete user: ', err);
