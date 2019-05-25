@@ -21,7 +21,8 @@ module.exports = {
       });
     },
   create(req, res) {
-    const { username, password, lastName, firstName, gender, bodyWeight, height, role} = req.body;
+    const { username, password, lastName, firstName, gender, bodyWeight, height} = req.body;
+    const role = req.body.role || 'athlete'; // Default role value
     userModel
       .findOne({ username })
       .exec((err, user) => {
@@ -33,17 +34,21 @@ module.exports = {
           if ((role === 'admin') && (req.user.role !== 'admin')) {
             res.status(400).json('You do not have permissions for this action. This action will be reported');
           } else {
-            const hashedPassword = bcrypt.hashSync(password, 10);
-            const user = new userModel({ username, password: hashedPassword, lastName, firstName, bodyWeight, height, gender, role: 'user'});
-              user
-              .save((err, result) => {
-                  if (err) { 
-                    console.log('Could not create user: ', err);
-                    res.status(400).json({ message: 'User could not be created' });
-                  } else {
-                    res.status(200).json({ message: 'User created' });
-                  }
-              });
+            if (role === 'athlete' || role === 'trainer') {
+              const hashedPassword = bcrypt.hashSync(password, 10);
+              const user = new userModel({ username, password: hashedPassword, lastName, firstName, bodyWeight, height, gender, role});
+                user
+                .save((err, result) => {
+                    if (err) { 
+                      console.log('Could not create user: ', err);
+                      res.status(400).json({ message: 'User could not be created' });
+                    } else {
+                      res.status(200).json({ message: 'User created' });
+                    }
+                });
+            } else {
+              res.status(200).json({ message: 'User role invalid' });
+            }
           }
         }
       });
