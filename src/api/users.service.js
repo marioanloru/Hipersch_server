@@ -32,13 +32,13 @@ module.exports = {
         if (user) {
           res.status(200).json({ message: 'User already created' });
         } else {
-          
           if ((role === 'admin') && (req.user.role !== 'admin')) {
             res.status(400).json('You do not have permissions for this action. This action will be reported');
           } else {
             if (role === 'athlete' || role === 'trainer') {
               const hashedPassword = bcrypt.hashSync(password, 10);
               const user = new userModel({ email, password: hashedPassword, lastName, firstName, bodyWeight, height, gender, role});
+              console.log("Usuario creado:: ", user);
                 user
                 .save((err, result) => {
                     if (err) { 
