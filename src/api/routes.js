@@ -13,6 +13,12 @@ router
   });
 
 router
+  .get('/running/test/:inicio/:fin', runningUtils.getUserTestsByDate);
+
+router
+  .get('/running/tests', runningUtils.getUserTests);
+
+router
   .post('/user/login', userService.authenticate);
 
 router
@@ -41,21 +47,5 @@ router
 
 router
   .post('/swimming/test', swimmingUtils.insertTest);
-
-
-router
-  .get('/running/test/:inicio/:fin', runningUtils.getUserTestsByDate);
-
-router
-  .get('/running/tests', runningUtils.getUserTests);
-
-/*router
-  .post('/test/running', (req, res) => {res.status(200).send('Hello world')})
-
-router
-  .post('/test/swimming', (req, res) => {res.status(200).send('Hello world')})
-
-router
-  .post('/test/running', (req, res) => {res.status(200).send('Hello world')})*/
 
 module.exports = router;
