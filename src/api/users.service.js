@@ -23,6 +23,8 @@ module.exports = {
   create(req, res) {
     const { email, password, lastName, firstName, gender, bodyWeight, height} = req.body;
     const role = req.body.role || 'athlete'; // Default role value
+    console.log('PARAMETROS RECIBIDOS!!!');
+    console.log(email, password, lastName, firstName, gender, bodyWeight, height, role);
     userModel
       .findOne({ email })
       .exec((err, user) => {
@@ -40,8 +42,7 @@ module.exports = {
                 user
                 .save((err, result) => {
                     if (err) { 
-                      if (err.code === 11000) res.status(400).json({ message: 'User already exists'});
-                      else res.status(400).json({ message: 'User could not be created' });
+                      res.status(400).json({ message: 'User could not be created' });
                     } else {
                       res.status(200).json({ message: 'User created' });
                     }
