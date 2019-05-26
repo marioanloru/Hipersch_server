@@ -23,8 +23,6 @@ module.exports = {
   create(req, res) {
     const { email, password, lastName, firstName, gender, bodyWeight, height} = req.body;
     const role = req.body.role || 'athlete'; // Default role value
-    console.log('PARAMETROS RECIBIDOS!!!');
-    console.log(email, password, lastName, firstName, gender, bodyWeight, height, role);
     userModel
       .findOne({ email })
       .exec((err, user) => {
@@ -38,7 +36,6 @@ module.exports = {
             if (role === 'athlete' || role === 'trainer') {
               const hashedPassword = bcrypt.hashSync(password, 10);
               const user = new userModel({ email, password: hashedPassword, lastName, firstName, bodyWeight, height, gender, role});
-              console.log("Usuario creado:: ", user);
                 user
                 .save((err, result) => {
                     if (err) { 
