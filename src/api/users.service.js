@@ -66,7 +66,7 @@ module.exports = {
           }
         });
     } else {
-      res.status(400).json('You do not have permissions for this action. This action will be reported');
+      res.status(400).json({ message: 'You do not have permissions for this action. This action will be reported'});
     }
   },
   getUserData(req, res) {
@@ -74,7 +74,8 @@ module.exports = {
     const heightMeter = height / 100;
     let bmi = bodyWeight / (heightMeter*heightMeter);
     bmi = Math.round(bmi * 10) / 10;
-    res.status(200)({ height, bodyWeight, bmi });
+    console.elog
+    res.status(200).json({ height, bodyWeight, bmi });
   }
 };
 
