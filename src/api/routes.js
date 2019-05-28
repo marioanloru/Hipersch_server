@@ -19,7 +19,7 @@ router
   .get('/running/tests', runningUtils.getUserTests);
 
 router
-  .get('/user/personal', userService.getUserData);
+  .get('/user/data', userService.getUserData);
 
 router
   .post('/user/login', userService.authenticate);
