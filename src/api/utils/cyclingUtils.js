@@ -69,22 +69,18 @@ function processTest(pam, puan, puae, gender, mainCallback) {
       async.waterfall([
         (callback) => {
           results.map = mathUtils.percentilRank(pvo2maxValues.samples, pam) * 10;
-          results.map = Math.round(results.map * 100)/100;
           callback(null);
         },
         (callback) => {
           results.vo2max = mathUtils.percentilRank(vo2maxValues.samples, 60.5) * 10;
-          results.vo2max = Math.round(results.vo2max * 100)/100;
           callback(null);
         },
         (callback) => {
           results.anaThreshold = mathUtils.percentilRank(puanValues.samples, puan) * 10;
-          results.anaThreshold = Math.round(results.anaThreshold * 100)/100;
           callback(null);
         },
         (callback) => {
           results.at = mathUtils.percentilRank(uanValues.samples, 73) * 10;
-          results.at = Math.round(results.at * 100)/100;
           callback(null);
         }
       ], (err, res) => {
@@ -123,7 +119,6 @@ function processPeakTest(peakPower, gender, bodyWeight, aspect, mainCallback) {
           console.log('PASO VALOR PARA CALCULAR RANGO PERCENTIL::', peakPower/bodyWeight);
           results[aspect] = mathUtils.percentilRank(aspectSamples.samples, peakPower/bodyWeight) * 10;
           console.log('RANGO PERCENTIL DE MAP:: ', results[aspect]);
-          results[aspect] = Math.round(results[aspect] * 100)/100;
           callback(null);
         },
       ], (err, res) => {
@@ -133,6 +128,18 @@ function processPeakTest(peakPower, gender, bodyWeight, aspect, mainCallback) {
 }
 
 module.exports = {
+  getUserTests: (req, res) => {
+    const { userId } = req.user;
+    cyclingTestModel
+      .find({ athlete: userId })
+      .exec((err, data) => {
+        if (err) {
+          res.status(500).json(err);
+        } else {
+          res.status(200).json(data);
+        }
+      });
+  },
   //  valores de la telaraña
   insertTest: (req, res) => {
     const { pam, puan, puae } = req.body;
@@ -165,8 +172,8 @@ module.exports = {
       }
     });
   },
-  //5s
-  insertTestFiveSec: (req, res) => {
+  //6s
+  insertTestSixSec: (req, res) => {
     const { peakPower } = req.body;
     const { userId, gender, bodyWeight} = req.user;
     console.log('INFORMACION DEL USUARIO::::', req.user);
@@ -226,8 +233,8 @@ module.exports = {
       }
     });
   },
-  //5min
-  insertTestFiveMin: (req, res) => {
+  //6min
+  insertTestSixMin: (req, res) => {
     console.log('INSERT TEST FIVE MIIINNN')
     const { peakPower } = req.body;
     const { userId, gender, bodyWeight } = req.user;
@@ -257,8 +264,8 @@ module.exports = {
       }
     });
   },
-  //60min
-  insertTestSixtyMin: (req, res) => {
+  //20min
+  insertTestTwentyMin: (req, res) => {
     const { peakPower } = req.body;
     const { userId, gender, bodyWeight } = req.user;
     
@@ -266,7 +273,6 @@ module.exports = {
       if (err) {
         console.log(err);
       } else {
-        console.log('VALORES OBTENIDOS DE PROCESAR EL TEST:: ', result);
         const testToInsert = new cyclingTestModel({
           p60min: result.p60min,
           athlete: userId,
