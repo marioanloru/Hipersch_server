@@ -150,7 +150,6 @@ module.exports = {
     const { userId, gender, height, swimmingCategory } = req.user;
     
     const thresholds = calculateThresholds(timeFourHundred, timeTwoHundred, swimmingCategory);
-
     processTest(thresholds.velocityLT, thresholds.velocityANAT, gender, height, (err, result) => {
       if (err) {
         console.log(err);
