@@ -70,24 +70,20 @@ function processTest(velocityLT, velocityANAT, gender, height, mainCallback) {
           let ltTime = distance / velocityLT;
           let efficiencyIndex = ltTime / ((distance * 100) / height);
           results.indexLT = mathUtils.percentilRank(indexLTValues.samples, efficiencyIndex) * 10;
-          results.indexLT = Math.round(results.indexLT * 100)/100;
           callback(null);
         },
         (callback) => {
           let anatTime = distance / velocityANAT;
           let efficiencyIndex = anatTime / ((distance * 100) / height);
           results.indexANAT = mathUtils.percentilRank(indexANATValues.samples, efficiencyIndex) * 10;
-          results.indexANAT = Math.round(results.indexANAT * 100)/100;
           callback(null);
         },
         (callback) => {
           results.anaThreshold = mathUtils.percentilRank(anaThresholdValues.samples, velocityANAT) * 10;
-          results.anaThreshold = Math.round(results.anaThreshold * 100)/100;
           callback(null);
         },
         (callback) => {
           results.lactateThreshold = mathUtils.percentilRank(lactateThresholdValues.samples, velocityLT) * 10;
-          results.lactateThreshold = Math.round(results.lactateThreshold * 100)/100;
           callback(null);
         }
       ], (err, res) => {
@@ -96,14 +92,66 @@ function processTest(velocityLT, velocityANAT, gender, height, mainCallback) {
     });
 }
 
+function calculateThresholds(timeFourHundred, timeTwoHundred, swimmingCategory) {
+  const result = { anat: 0, lt: 0 };
+  const categoryWeights = {
+    'afld': 0.01,   //  Adult Female Long Distance
+    'afs': 0.025,   //  Adult Female Sprinter
+    'amld': 0.015,  //  Adult Male Long Distance
+    'ams': 0.025,   //  Adult Male Sprinter
+    'jfld': 0.01,   //  Junior Female Long Distance
+    'jfs': 0.025,   //  Junior Female Sprinter
+    'jmld': 0.015,  //  Junior Male Long Distance
+    'jms': 0.035,   //  Junior Male Sprinter
+    'if': 0.02,     //  Infantile Female
+    'im': 0.025,    // Infantile Male
+    'bf': 0.02,     //  Beginner Female
+    'bm': 0.025     //  Beginner Male
+  }
+
+  //  Velocity and velocity fixed by category
+  const minsFourHundred = Math.floor(timeFourHundred/60);
+  const minsTwoHundred = Math.floor(timeTwoHundred/60)
+  const secFourHundred = timeFourHundred % 60;
+  const secTwoHundred = timeTwoHundred % 60;
+
+  let vcrit, vcritFixed;
+  vcrit = (400 - 200) / (minsFourHundred*60 + secFourHundred) - (minsTwoHundred*60 - secTwoHundred);
+
+  //  Fix based on athlete category
+  vcritFixed = vcrit - (vcrit * categoryWeights[swimmingCategory]);
+
+
+  //  Last percentage is a fixed boost
+  result.velocityANAT = 1500 / ((1500 / vcrit) * 1.035);
+  result.velocityLT = 1500 / ((1500 / vcrit) * 1.073);
+
+  return result;
+}
+
 
 
 module.exports = {
+  getUserTests: (req, res) => {
+    const { userId } = req.user;
+    swimmingTestModel
+      .find({ athlete: userId })
+      .exec((err, data) => {
+        if (err) {
+          res.status(500).json(err);
+        } else {
+          res.status(200).json(data);
+        }
+      });
+  },
   insertTest: (req, res) => {
-    const { velocityLT, velocityANAT } = req.body;
-    const { userId, gender, height} = req.user;
+    //  Time must be in seconds
+    const { timeFourHundred, timeTwoHundred } = req.body;
+    const { userId, gender, height, swimmingCategory } = req.user;
     
-    processTest(velocityLT, velocityANAT, gender, height, (err, result) => {
+    const thresholds = calculateThresholds(timeFourHundred, timeTwoHundred, swimmingCategory);
+
+    processTest(thresholds.velocityLT, thresholds.velocityANAT, gender, height, (err, result) => {
       if (err) {
         console.log(err);
       } else {

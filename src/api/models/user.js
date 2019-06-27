@@ -10,6 +10,7 @@ const User = new Schema({
   bodyWeight: { type: Number, required: true },
   height: { type: Number, required: true },
   createdDate: { type: Date, default: Date.now },
+  swimmingCategory: { type: String, required: true},
   role: { type: String }
 });
 
