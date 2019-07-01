@@ -37,9 +37,6 @@ router
   .get('/cycling/test', cyclingUtils.getUserTests);
 
 router
-  .post('/cycling/test', cyclingUtils.insertTest);
-
-router
   .post('/cycling/test/sixsec', cyclingUtils.insertTestSixSec);
 
 router

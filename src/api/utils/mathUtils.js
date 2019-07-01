@@ -38,7 +38,7 @@ module.exports = {
       let valueInterpolated = module.exports.linearInterpolation(valueBelow, value, valueAbove, 0, 100) / 100;
       res = percentileBelow + valueInterpolated *(percentileAbove - percentileBelow);
     }
-      return Math.round(res * 100)/100;
+    return Math.round(res * 100)/100;
   },
   linearInterpolation: (x0, x, x1, y0, y1) => {
     return Math.round(y0 + (y1 - y0) * ((x - x0) / (x1 - x0))* 100)/100;

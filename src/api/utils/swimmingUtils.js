@@ -79,7 +79,7 @@ function processTest(velocityLT, velocityANAT, gender, height, mainCallback) {
           callback(null);
         },
         (callback) => {
-          results.anaThreshold = mathUtils.percentilRank(anaThresholdValues.samples, velocityANAT) * 10;
+          results.anaThreshold = Math.round(mathUtils.percentilRank(anaThresholdValues.samples, velocityANAT) * 10 * 100) / 100;
           callback(null);
         },
         (callback) => {
@@ -92,6 +92,7 @@ function processTest(velocityLT, velocityANAT, gender, height, mainCallback) {
     });
 }
 
+//  Time comes in seconds
 function calculateThresholds(timeFourHundred, timeTwoHundred, swimmingCategory) {
   const result = { anat: 0, lt: 0 };
   const categoryWeights = {
@@ -109,17 +110,14 @@ function calculateThresholds(timeFourHundred, timeTwoHundred, swimmingCategory) 
     'bm': 0.025     //  Beginner Male
   }
 
-  //  Velocity and velocity fixed by category
-  const minsFourHundred = Math.floor(timeFourHundred/60);
-  const minsTwoHundred = Math.floor(timeTwoHundred/60)
-  const secFourHundred = timeFourHundred % 60;
-  const secTwoHundred = timeTwoHundred % 60;
 
   let vcrit, vcritFixed;
-  vcrit = (400 - 200) / (minsFourHundred*60 + secFourHundred) - (minsTwoHundred*60 - secTwoHundred);
-
+  vcrit = (400 - 200) / (timeFourHundred - timeTwoHundred);
+  vcrit = Math.round(vcrit * 1000) / 1000;
+  
   //  Fix based on athlete category
-  vcritFixed = vcrit - (vcrit * categoryWeights[swimmingCategory]);
+  vcritFixed = vcrit - (vcrit * categoryWeights[swimmingCategory.toLowerCase()]);
+  vcritFixed = Math.round(vcritFixed * 1000) / 1000;
 
 
   //  Last percentage is a fixed boost
@@ -152,7 +150,7 @@ module.exports = {
     const thresholds = calculateThresholds(timeFourHundred, timeTwoHundred, swimmingCategory);
     processTest(thresholds.velocityLT, thresholds.velocityANAT, gender, height, (err, result) => {
       if (err) {
-        console.log(err);
+        res.status(500).json({ message: 'Something went wrong' });
       } else {
         const testToInsert = new swimmingTestModel({
           indexLT: result.indexLT,
@@ -162,7 +160,6 @@ module.exports = {
           athlete: userId,
           testId: uuid4()
         });
-        console.log(testToInsert);
     
         testToInsert
           .save((err, data) => {
