@@ -35,9 +35,6 @@ module.exports = {
     } else {
       let percentileBelow = module.exports.percentilRank(samples, valueBelow);
       let percentileAbove = module.exports.percentilRank(samples, valueAbove);
-      console.log(valueBelow);
-      console.log(value);
-      console.log(valueAbove);
       let valueInterpolated = module.exports.linearInterpolation(valueBelow, value, valueAbove, 0, 100) / 100;
       res = percentileBelow + valueInterpolated *(percentileAbove - percentileBelow);
     }

@@ -147,7 +147,7 @@ module.exports = {
     
     let result = processTest(pam, puan, puae, gender, (err, result) => {
       if (err) {
-        console.log(err);
+        res.status(500).json({ message: 'Something went wrong' });
       } else {
         console.log('VALORES OBTENIDOS DE PROCESAR EL TEST:: ', result);
         const testToInsert = new cyclingTestModel({
@@ -163,7 +163,7 @@ module.exports = {
         testToInsert
           .save((err, data) => {
             if (err) {
-              res.status(500).json(err);
+              res.status(500).json({ message: 'Test could not be saved' });
             } else {
               result.testId = testToInsert.testId;
               res.status(200).json(result);
@@ -180,7 +180,7 @@ module.exports = {
     
     let result = processPeakTest(peakPower, gender, bodyWeight, 'p5s', (err, result) => {
       if (err) {
-        console.log(err);
+        res.status(500).json({ message: 'Something went wrong' });
       } else {
         console.log('VALORES OBTENIDOS DE PROCESAR EL TEST:: ', result);
         const testToInsert = new cyclingTestModel({
@@ -194,7 +194,7 @@ module.exports = {
         testToInsert
           .save((err, data) => {
             if (err) {
-              res.status(500).json(err);
+              res.status(500).json({ message: 'Test could not be saved' });
             } else {
               result.testId = testToInsert.testId;
               res.status(200).json(result);
@@ -210,7 +210,7 @@ module.exports = {
     
     let result = processPeakTest(peakPower, gender, bodyWeight, 'p1min', (err, result) => {
       if (err) {
-        console.log(err);
+        res.status(500).json({ message: 'Something went wrong' });
       } else {
         console.log('VALORES OBTENIDOS DE PROCESAR EL TEST:: ', result);
         const testToInsert = new cyclingTestModel({
@@ -224,7 +224,7 @@ module.exports = {
         testToInsert
           .save((err, data) => {
             if (err) {
-              res.status(500).json(err);
+              res.status(500).json({ message: 'Test could not be saved' });
             } else {
               result.testId = testToInsert.testId;
               res.status(200).json(result);
@@ -241,7 +241,7 @@ module.exports = {
     
     let result = processPeakTest(peakPower, gender, bodyWeight, 'p5min', (err, result) => {
       if (err) {
-        console.log(err);
+        res.status(500).json({ message: 'Something went wrong' })
       } else {
         console.log('VALORES OBTENIDOS DE PROCESAR EL TEST:: ', result);
         const testToInsert = new cyclingTestModel({
@@ -255,7 +255,7 @@ module.exports = {
         testToInsert
           .save((err, data) => {
             if (err) {
-              res.status(500).json(err);
+              res.status(500).json({ message: 'Test could no be saved'});
             } else {
               result.testId = testToInsert.testId;
               res.status(200).json(result);
@@ -264,14 +264,15 @@ module.exports = {
       }
     });
   },
-  //20min
-  insertTestTwentyMin: (req, res) => {
+  //  60min
+  insertTestSixtyMin: (req, res) => {
     const { peakPower } = req.body;
     const { userId, gender, bodyWeight } = req.user;
     
     let result = processPeakTest(peakPower, gender, bodyWeight, 'p60min', (err, result) => {
       if (err) {
         console.log(err);
+        res.status(500).json({ message: 'Something went wrong'})
       } else {
         const testToInsert = new cyclingTestModel({
           p60min: result.p60min,
@@ -284,7 +285,7 @@ module.exports = {
         testToInsert
           .save((err, data) => {
             if (err) {
-              res.status(500).json(err);
+              res.status(500).json({ message: 'Test could not be saved' });
             } else {
               result.testId = testToInsert.testId;
               res.status(200).json(result);
