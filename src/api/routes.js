@@ -34,19 +34,25 @@ router
   .post('/running/test', runningUtils.insertTestSixMinutes);
 
 router
+  .get('/cycling/test', cyclingUtils.getUserTests);
+
+router
   .post('/cycling/test', cyclingUtils.insertTest);
 
 router
-  .post('/cycling/test/fivesec', cyclingUtils.insertTestFiveSec);
+  .post('/cycling/test/sixsec', cyclingUtils.insertTestSixSec);
 
 router
   .post('/cycling/test/onemin', cyclingUtils.insertTestOneMin);
 
 router
-  .post('/cycling/test/fivemin', cyclingUtils.insertTestFiveMin);
+  .post('/cycling/test/sixmin', cyclingUtils.insertTestSixMin);
 
 router
-  .post('/cycling/test/sixtymin', cyclingUtils.insertTestSixtyMin);
+  .post('/cycling/test/twentymin', cyclingUtils.insertTestSixtyMin);
+
+router
+  .get('/swimming/test', swimmingUtils.getUserTests);
 
 router
   .post('/swimming/test', swimmingUtils.insertTest);
