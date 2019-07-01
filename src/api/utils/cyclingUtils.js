@@ -110,15 +110,11 @@ function processPeakTest(peakPower, gender, bodyWeight, aspect, mainCallback) {
     ], (err, res) => {
       let samples = _.sortBy(res, 'max');
       let aspectSamples = _.find(res, { aspect });
-      console.log('p5s VALUEEES' , );
 
       //  CALCULO DE PERCENTIL
       async.waterfall([
         (callback) => {
-          console.log('DIVIDO PEAK POWER ENTRE BODYWEIGHT', peakPower, bodyWeight);
-          console.log('PASO VALOR PARA CALCULAR RANGO PERCENTIL::', peakPower/bodyWeight);
-          results[aspect] = mathUtils.percentilRank(aspectSamples.samples, peakPower/bodyWeight) * 10;
-          console.log('RANGO PERCENTIL DE MAP:: ', results[aspect]);
+          results[aspect] = Math.round(mathUtils.percentilRank(aspectSamples.samples, peakPower/bodyWeight) * 10 * 100) / 100;
           callback(null);
         },
       ], (err, res) => {
@@ -140,56 +136,21 @@ module.exports = {
         }
       });
   },
-  //  valores de la telaraña
-  insertTest: (req, res) => {
-    const { pam, puan, puae } = req.body;
-    const { userId, gender} = req.user;
-    
-    let result = processTest(pam, puan, puae, gender, (err, result) => {
-      if (err) {
-        res.status(500).json({ message: 'Something went wrong' });
-      } else {
-        console.log('VALORES OBTENIDOS DE PROCESAR EL TEST:: ', result);
-        const testToInsert = new cyclingTestModel({
-          map: result.map,
-          vo2max: result.vo2max,
-          anaThreshold: result.anaThreshold,
-          at: result.at,
-          athlete: userId,
-          testId: uuid4()
-        });
-        console.log(testToInsert);
-    
-        testToInsert
-          .save((err, data) => {
-            if (err) {
-              res.status(500).json({ message: 'Test could not be saved' });
-            } else {
-              result.testId = testToInsert.testId;
-              res.status(200).json(result);
-            }
-          });
-      }
-    });
-  },
   //6s
   insertTestSixSec: (req, res) => {
     const { peakPower } = req.body;
     const { userId, gender, bodyWeight} = req.user;
-    console.log('INFORMACION DEL USUARIO::::', req.user);
     
     let result = processPeakTest(peakPower, gender, bodyWeight, 'p5s', (err, result) => {
       if (err) {
         res.status(500).json({ message: 'Something went wrong' });
       } else {
-        console.log('VALORES OBTENIDOS DE PROCESAR EL TEST:: ', result);
         const testToInsert = new cyclingTestModel({
           p5s: result.p5s,
           athlete: userId,
           type: 'p5sec',
           testId: uuid4()
         });
-        console.log(testToInsert);
     
         testToInsert
           .save((err, data) => {

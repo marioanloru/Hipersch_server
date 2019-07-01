@@ -55,16 +55,16 @@ function processSixMinutesTest(distance, gender, vo2maxIndirect, mainCallback) {
 
       async.waterfall([
         (callback) => {
-          results.MAVvVo2max = mathUtils.percentilRank(mavValues.samples, speedKMH) * 10;
+          results.MAVvVo2max = Math.round(mathUtils.percentilRank(mavValues.samples, speedKMH)*10 * 100) / 100;
           callback(null);
         },
         (callback) => {
-          results.vo2max = mathUtils.percentilRank(vo2Values.samples, vo2maxIndirect) * 10;
+          results.vo2max = Math.round(mathUtils.percentilRank(vo2Values.samples, vo2maxIndirect) * 10 * 100) / 100;
           callback(null);
         },
         (callback) => {
           //  15.3 comes from ergospirometric test
-          results.vat = mathUtils.percentilRank(vuanValues.samples, 15.3) * 10;
+          results.vat = Math.round(mathUtils.percentilRank(vuanValues.samples, 15.3) * 10 * 100) / 100;
           callback(null);
         }
       ], (err, res) => {
