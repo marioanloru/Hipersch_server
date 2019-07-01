@@ -172,5 +172,16 @@ module.exports = {
           });
       }
     });
+  },
+  deleteTest: (req, res) => {
+    const { testId } = req.body;
+    swimmingTestModel
+      .deleteOne({ testId }, (err) => {
+        if (err) {
+          res.status(500).json({ message: 'Something went wrong' });
+        } else {
+          res.status(200).json(test);
+        }
+      });
   }
 }

@@ -254,5 +254,17 @@ module.exports = {
           });
       }
     });
+  },
+  deleteTest: (req, res) => {
+    const { testId } = req.params;
+    console.log('Testid:: ', testId);
+    cyclingTestModel
+      .deleteOne({ testId }, (err) => {
+        if (err) {
+          res.status(500).json({ message: 'Something went wrong' });
+        } else {
+          res.status(200).json({ message: 'Cycling test deleted' });
+        }
+      });
   }
 };

@@ -132,6 +132,17 @@ module.exports = {
           res.status(200).json(data);
         }
       });
+  },
+  deleteTest: (req, res) => {
+    const { testId } = req.params;
+    runningTestModel
+      .deleteOne({ testId }, (err) => {
+        if (err) {
+          res.status(500).json({ message: 'Something went wrong' });
+        } else {
+          res.status(200).json(test);
+        }
+      });
   }
 
 }

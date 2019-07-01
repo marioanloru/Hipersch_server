@@ -12,6 +12,7 @@ router
     res.status(200).json({ message: 'Everything up and working'});
   });
 
+  
 router
   .get('/running/test/:inicio/:fin', runningUtils.getUserTestsByDate);
 
@@ -34,6 +35,9 @@ router
   .post('/running/test', runningUtils.insertTestSixMinutes);
 
 router
+  .delete('/running/test/:testId', runningUtils.deleteTest);
+
+router
   .get('/cycling/test', cyclingUtils.getUserTests);
 
 router
@@ -49,9 +53,15 @@ router
   .post('/cycling/test/twentymin', cyclingUtils.insertTestSixtyMin);
 
 router
+  .delete('/cycling/test/:testId', cyclingUtils.deleteTest);
+
+router
   .get('/swimming/test', swimmingUtils.getUserTests);
 
 router
   .post('/swimming/test', swimmingUtils.insertTest);
+
+router
+  .delete('/swimming/test/:testId', swimmingUtils.deleteTest);
 
 module.exports = router;
