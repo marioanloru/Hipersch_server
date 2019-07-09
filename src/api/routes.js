@@ -17,7 +17,7 @@ router
   .get('/running/test/:inicio/:fin', runningUtils.getUserTestsByDate);
 
 router
-  .get('/running/tests', runningUtils.getUserTests);
+  .get('/running/test', runningUtils.getUserTests);
 
 router
   .get('/user/data', userService.getUserData);

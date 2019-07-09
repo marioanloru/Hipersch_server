@@ -111,6 +111,7 @@ module.exports = {
     const { userId } = req.user;
     runningTestModel
       .find({ athlete: userId })
+      .limit(3)
       .exec((err, data) => {
         if (err) {
           res.status(500).json(err);
