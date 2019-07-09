@@ -134,6 +134,7 @@ module.exports = {
     const { userId } = req.user;
     swimmingTestModel
       .find({ athlete: userId })
+      .limit(3)
       .exec((err, data) => {
         if (err) {
           res.status(500).json(err);
