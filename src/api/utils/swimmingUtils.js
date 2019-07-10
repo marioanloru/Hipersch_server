@@ -134,6 +134,7 @@ module.exports = {
     const { userId } = req.user;
     swimmingTestModel
       .find({ athlete: userId })
+      .sort({ date: -1 })
       .limit(3)
       .exec((err, data) => {
         if (err) {
