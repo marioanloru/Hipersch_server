@@ -11,6 +11,10 @@ const cyclingTest = new Schema({
   vo2max: { type: Number },
   anaThreshold: { type: Number},
   at: { type: Number},
+  p6sec: { type: Number },
+  p1min: { type: Number },
+  p6min: { type: Number },
+  p20min: { type: Number },
   type: { 
     type: String,
     required: true,
@@ -22,7 +26,7 @@ const cyclingTest = new Schema({
     unique: true },
   date: { 
     type: Date, 
-    default: Date.now }
+    default: Date.now },
 });
 
 module.exports = mongoose.model('cyclingTest', cyclingTest);

@@ -128,7 +128,7 @@ module.exports = {
     const { userId } = req.user;
     const result = [];
     cyclingTestModel
-      .find({ athlete: userId, aspect: 'p6sec' })
+      .find({ athlete: userId, type: 'p6sec' })
       .sort({ date: -1 })
       .limit(3)
       .exec((err, data) => {
@@ -137,7 +137,7 @@ module.exports = {
         } else {
           result.push(...data);
           cyclingTestModel
-            .find({ athlete: userId, aspect: 'p1min' })
+            .find({ athlete: userId, type: 'p1min' })
             .sort({ date: -1 })
             .limit(3)
             .exec((err, data) => {
@@ -146,7 +146,7 @@ module.exports = {
               } else {
                 result.push(...data);
                 cyclingTestModel
-                  .find({ athlete: userId, aspect: 'p6min' })
+                  .find({ athlete: userId, type: 'p6min' })
                   .sort({ date: -1 })
                   .limit(3)
                   .exec((err, data) => {
@@ -155,7 +155,7 @@ module.exports = {
                     } else {
                       result.push(...data);
                       cyclingTestModel
-                        .find({ athlete: userId, aspect: 'p6sec' })
+                        .find({ athlete: userId, type: 'p6sec' })
                         .sort({ date: -1 })
                         .limit(3)
                         .exec((err, data) => {
@@ -176,7 +176,7 @@ module.exports = {
   getUserTestsSixSec: (req, res) => {
     const { userId } = req.user;
     cyclingTestModel
-      .find({ athlete: userId, aspect: 'p6sec' })
+      .find({ athlete: userId, type: 'p6sec' })
       .sort({ date: -1 })
       .limit(3)
       .exec((err, data) => {
@@ -190,7 +190,7 @@ module.exports = {
   getUserTestsOneMin: (req, res) => {
     const { userId } = req.user;
     cyclingTestModel
-      .find({ athlete: userId, aspect: 'p1min'})
+      .find({ athlete: userId, type: 'p1min'})
       .sort({ date: -1 })
       .limit(3)
       .exec((err, data) => {
@@ -204,7 +204,7 @@ module.exports = {
   getUserTestsSixMin: (req, res) => {
     const { userId } = req.user;
     cyclingTestModel
-      .find({ athlete: userId, aspect: 'p6min'})
+      .find({ athlete: userId, type: 'p6min'})
       .sort({ date: -1 })
       .limit(3)
       .exec((err, data) => {
@@ -218,7 +218,7 @@ module.exports = {
   getUserTestsTwentyMin: (req, res) => {
     const { userId } = req.user;
     cyclingTestModel
-      .find({ athlete: userId, aspect: 'p20min'})
+      .find({ athlete: userId, type: 'p20min'})
       .sort({ date: -1 })
       .limit(3)
       .exec((err, data) => {
@@ -239,12 +239,14 @@ module.exports = {
       if (err) {
         res.status(500).json({ message: 'Something went wrong' });
       } else {
+        console.log('Resultaado ->', result, result.p6sec);
         const testToInsert = new cyclingTestModel({
-          p6s: result.p6s,
+          p6sec: result.p6sec,
           athlete: userId,
           type: 'p6sec',
           testId: uuid4()
         });
+        console.log(testToInsert);
     
         testToInsert
           .save((err, data) => {
@@ -267,6 +269,7 @@ module.exports = {
       if (err) {
         res.status(500).json({ message: 'Something went wrong' });
       } else {
+        console.log("rESULTADO: ", result);
         const testToInsert = new cyclingTestModel({
           p1min: result.p1min,
           athlete: userId,
@@ -296,6 +299,8 @@ module.exports = {
       if (err) {
         res.status(500).json({ message: 'Something went wrong' })
       } else {
+        console.log("rESULTADO: ", result);
+
         const testToInsert = new cyclingTestModel({
           p6min: result.p6min,
           athlete: userId,
@@ -326,8 +331,10 @@ module.exports = {
         console.log(err);
         res.status(500).json({ message: 'Something went wrong'})
       } else {
+        console.log("rESULTADO: ", result);
+
         const testToInsert = new cyclingTestModel({
-          p20min: result.p60min,
+          p20min: result.p20min,
           athlete: userId,
           type: 'p20min',
           testId: uuid4()
