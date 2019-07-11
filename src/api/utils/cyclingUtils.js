@@ -126,8 +126,57 @@ function processPeakTest(peakPower, gender, bodyWeight, aspect, mainCallback) {
 module.exports = {
   getUserTests: (req, res) => {
     const { userId } = req.user;
+    const result = [];
     cyclingTestModel
-      .find({ athlete: userId })
+      .find({ athlete: userId, aspect: 'p6sec' })
+      .sort({ date: -1 })
+      .limit(3)
+      .exec((err, data) => {
+        if (err) {
+          res.status(500).json(err);
+        } else {
+          results.push(...data);
+          cyclingTestModel
+            .find({ athlete: userId, aspect: 'p1min' })
+            .sort({ date: -1 })
+            .limit(3)
+            .exec((err, data) => {
+              if (err) {
+                res.status(500).json(err);
+              } else {
+                result.push(...data);
+                cyclingTestModel
+                  .find({ athlete: userId, aspect: 'p6min' })
+                  .sort({ date: -1 })
+                  .limit(3)
+                  .exec((err, data) => {
+                    if (err) {
+                      res.status(500).json(err);
+                    } else {
+                      result.push(...data);
+                      cyclingTestModel
+                        .find({ athlete: userId, aspect: 'p6sec' })
+                        .sort({ date: -1 })
+                        .limit(3)
+                        .exec((err, data) => {
+                          if (err) {
+                            res.status(500).json(err);
+                          } else {
+                            result.push(...data);
+                            res.status(200).json(result);
+                          }
+                        });
+                    }
+                  });
+              }
+            });
+        }
+      });
+  },
+  getUserTestsSixSec: (req, res) => {
+    const { userId } = req.user;
+    cyclingTestModel
+      .find({ athlete: userId, aspect: 'p6sec' })
       .sort({ date: -1 })
       .limit(3)
       .exec((err, data) => {
@@ -138,19 +187,62 @@ module.exports = {
         }
       });
   },
+  getUserTestsOneMin: (req, res) => {
+    const { userId } = req.user;
+    cyclingTestModel
+      .find({ athlete: userId, aspect: 'p1min'})
+      .sort({ date: -1 })
+      .limit(3)
+      .exec((err, data) => {
+        if (err) {
+          res.status(500).json(err);
+        } else {
+          res.status(200).json(data);
+        }
+      });
+  },
+  getUserTestsSixMin: (req, res) => {
+    const { userId } = req.user;
+    cyclingTestModel
+      .find({ athlete: userId, aspect: 'p6min'})
+      .sort({ date: -1 })
+      .limit(3)
+      .exec((err, data) => {
+        if (err) {
+          res.status(500).json(err);
+        } else {
+          res.status(200).json(data);
+        }
+      });
+  },
+  getUserTestsTwentyMin: (req, res) => {
+    const { userId } = req.user;
+    cyclingTestModel
+      .find({ athlete: userId, aspect: 'p20min'})
+      .sort({ date: -1 })
+      .limit(3)
+      .exec((err, data) => {
+        if (err) {
+          res.status(500).json(err);
+        } else {
+          res.status(200).json(data);
+        }
+      });
+  },
+
   //6s
   insertTestSixSec: (req, res) => {
     const { peakPower } = req.body;
     const { userId, gender, bodyWeight} = req.user;
     
-    let result = processPeakTest(peakPower, gender, bodyWeight, 'p5s', (err, result) => {
+    let result = processPeakTest(peakPower, gender, bodyWeight, 'p6sec', (err, result) => {
       if (err) {
         res.status(500).json({ message: 'Something went wrong' });
       } else {
         const testToInsert = new cyclingTestModel({
           p6s: result.p5s,
           athlete: userId,
-          type: 'p5sec',
+          type: 'p6sec',
           testId: uuid4()
         });
     
@@ -232,7 +324,7 @@ module.exports = {
     const { peakPower } = req.body;
     const { userId, gender, bodyWeight } = req.user;
     
-    let result = processPeakTest(peakPower, gender, bodyWeight, 'p60min', (err, result) => {
+    let result = processPeakTest(peakPower, gender, bodyWeight, 'p20min', (err, result) => {
       if (err) {
         console.log(err);
         res.status(500).json({ message: 'Something went wrong'})
@@ -240,7 +332,7 @@ module.exports = {
         const testToInsert = new cyclingTestModel({
           p20min: result.p60min,
           athlete: userId,
-          type: 'p60min',
+          type: 'p20min',
           testId: uuid4()
         });
         console.log(testToInsert);

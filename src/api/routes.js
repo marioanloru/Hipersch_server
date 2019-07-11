@@ -41,6 +41,18 @@ router
   .get('/cycling/test', cyclingUtils.getUserTests);
 
 router
+  .get('/cycling/test/sixsec', cyclingUtils.getUserTestsSixSec);
+
+router
+  .get('/cycling/test/onemin', cyclingUtils.getUserTestsOneMin);
+
+router
+  .get('/cycling/test/sixmin', cyclingUtils.getUserTestsSixMin);
+
+router
+  .get('/cycling/test/twentymin', cyclingUtils.getUserTestsTwentyMin);
+
+router
   .post('/cycling/test/sixsec', cyclingUtils.insertTestSixSec);
 
 router
