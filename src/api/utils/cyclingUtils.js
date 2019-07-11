@@ -155,7 +155,7 @@ module.exports = {
                     } else {
                       result.push(...data);
                       cyclingTestModel
-                        .find({ athlete: userId, type: 'p6sec' })
+                        .find({ athlete: userId, type: 'p20min' })
                         .sort({ date: -1 })
                         .limit(3)
                         .exec((err, data) => {
