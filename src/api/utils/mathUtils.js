@@ -9,7 +9,6 @@ module.exports = {
     let res = 0.0; 
 
     //  Look for value bounds
-    console.log("Samples value: ", samples, value)
     for (let i = 0; i < samples.length; i += 1) {
       if (samples[i] === value && !valueInSample) {
         valueInSample = true;
@@ -33,16 +32,11 @@ module.exports = {
 
     if (valueInSample) {
       res = timesUnder / (timesUnder + timesAbove);
-      console.log("Value in sample: ", res);
     } else {
       let percentileBelow = module.exports.percentilRank(samples, valueBelow);
-      console.log("Percentil por debajo: ", percentileBelow);      
       let percentileAbove = module.exports.percentilRank(samples, valueAbove);
-      console.log("Percentil por debajo: ", percentileAbove);
       let valueInterpolated = module.exports.linearInterpolation(valueBelow, value, valueAbove, 0, 100) / 100;
-      console.log("Valor interpolado: ", valueInterpolated);
       res = percentileBelow + valueInterpolated *(percentileAbove - percentileBelow);
-      console.log("Resultado:: ", res);
     }
     return Math.round(res * 100)/100;
   },

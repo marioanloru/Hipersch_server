@@ -114,7 +114,6 @@ function processPeakTest(peakPower, gender, bodyWeight, aspect, mainCallback) {
       //  CALCULO DE PERCENTIL
       async.waterfall([
         (callback) => {
-          console.log("ASPECT SAMPLES: ", aspectSamples);
           results[aspect] = Math.round(mathUtils.percentilRank(aspectSamples.samples, peakPower/bodyWeight) * 10 * 100) / 100;
           callback(null);
         },
@@ -268,7 +267,6 @@ module.exports = {
       if (err) {
         res.status(500).json({ message: 'Something went wrong' });
       } else {
-        console.log('VALORES OBTENIDOS DE PROCESAR EL TEST:: ', result);
         const testToInsert = new cyclingTestModel({
           p1min: result.p1min,
           athlete: userId,
@@ -291,7 +289,6 @@ module.exports = {
   },
   //6min
   insertTestSixMin: (req, res) => {
-    console.log('INSERT TEST FIVE MIIINNN')
     const { peakPower } = req.body;
     const { userId, gender, bodyWeight } = req.user;
     
@@ -299,7 +296,6 @@ module.exports = {
       if (err) {
         res.status(500).json({ message: 'Something went wrong' })
       } else {
-        console.log('VALORES OBTENIDOS DE PROCESAR EL TEST:: ', result);
         const testToInsert = new cyclingTestModel({
           p6min: result.p6min,
           athlete: userId,
@@ -352,7 +348,6 @@ module.exports = {
   },
   deleteTest: (req, res) => {
     const { testId } = req.params;
-    console.log('Testid:: ', testId);
     cyclingTestModel
       .deleteOne({ testId }, (err) => {
         if (err) {
