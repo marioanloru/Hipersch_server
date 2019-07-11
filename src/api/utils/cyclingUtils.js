@@ -148,7 +148,7 @@ module.exports = {
         res.status(500).json({ message: 'Something went wrong' });
       } else {
         const testToInsert = new cyclingTestModel({
-          p5s: result.p5s,
+          p6s: result.p5s,
           athlete: userId,
           type: 'p5sec',
           testId: uuid4()
@@ -208,7 +208,7 @@ module.exports = {
       } else {
         console.log('VALORES OBTENIDOS DE PROCESAR EL TEST:: ', result);
         const testToInsert = new cyclingTestModel({
-          p5min: result.p5min,
+          p6min: result.p5min,
           athlete: userId,
           type: 'p5min',
           testId: uuid4()
@@ -238,7 +238,7 @@ module.exports = {
         res.status(500).json({ message: 'Something went wrong'})
       } else {
         const testToInsert = new cyclingTestModel({
-          p60min: result.p60min,
+          p20min: result.p60min,
           athlete: userId,
           type: 'p60min',
           testId: uuid4()
