@@ -135,7 +135,7 @@ module.exports = {
         if (err) {
           res.status(500).json(err);
         } else {
-          results.push(...data);
+          result.push(...data);
           cyclingTestModel
             .find({ athlete: userId, aspect: 'p1min' })
             .sort({ date: -1 })
