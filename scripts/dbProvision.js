@@ -1,8 +1,13 @@
+require('dotenv').config();
 const initializeUtils = require('./utils');
 const mongoose = require('mongoose');
 const async = require('async');
 
-mongoose.connect('mongodb://localhost:27017/app', {useNewUrlParser: true});
+if (process.env.ENVIRONMENT === 'develop') {
+mongoose.connect(process.env.MONGODB_URI, {useNewUrlParser: true});
+} else {
+  mongoose.connect(process.env.MONGODB_URI + ':' + process.env.MONGODB_PORT + '/' + process.env.MONGODB_DB, {useNewUrlParser: true});
+}
 const db = mongoose.connection;
 
 db.once('open', () => {
@@ -52,9 +57,5 @@ async
   ], (err, res) => {
     mongoose.disconnect();
   });
-
-
-//initializeUtils.initializeSwimmingTable();
-//initializeUtils.initializeCyclismTable();
 
 
