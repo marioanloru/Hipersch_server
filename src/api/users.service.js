@@ -83,7 +83,7 @@ module.exports = {
             if (role === 'athlete' || role === 'trainer') {
               if (validateFields(email, password, lastName, firstName, gender, bodyWeight, height, swimmingCategory)) {
                 const hashedPassword = bcrypt.hashSync(password, 10);
-                const user = new userModel({ email, password: hashedPassword, lastName, firstName, bodyWeight, height, gender, role});
+                const user = new userModel({ email, password: hashedPassword, lastName, firstName, bodyWeight, height, gender, role: 'athlete'});
                   user
                   .save((err, result) => {
                       if (err) { 
