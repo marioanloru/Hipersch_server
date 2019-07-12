@@ -42,6 +42,31 @@ module.exports = {
         }
       });
     },
+  authenticateTrainer(req, res) {
+    const { email, password, athlete } = req.body;
+    userModel
+      .findOne({ email })
+      .exec((err, user) => {
+        if (err) {
+          res.status(500).json(err);
+        } else {
+          if (user && bcrypt.compareSync(password, user.password)) {
+            userModel
+              .findOne({ email: athlete })
+              .exec((err, user) => {
+                if (err) {
+                  res.status(400).json({ message: 'Could not retrieve athlete information' });
+                } else {
+                  const token = jwt.sign({ email: user.email, gender: user.gender, role: user.role, userId: user.id, bodyWeight: user.bodyWeight, height: user.height, swimmingCategory: user.swimmingCategory}, process.env.SECRET);
+                  res.status(200).json({ token });
+                }
+              });
+          } else {
+            res.status(400).json({ message: 'Login credentials incorrect' });
+          }
+        }
+      });
+    },
   create(req, res) {
     const { email, password, lastName, firstName, gender, bodyWeight, height, swimmingCategory } = req.body;
     const role = req.body.role || 'athlete'; // Default role value

@@ -10,6 +10,7 @@ function jwt() {
         path: [
             // public routes that don't require authentication
             '/api/user/login',
+            '/api/user/login/trainer',
             '/api/user/register',
             '/api/status'
         ]
