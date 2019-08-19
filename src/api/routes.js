@@ -38,6 +38,9 @@ router
   .post('/user/delete', userService.delete);
 
 router
+  .get('/running/trainingZone', runningUtils.getTrainingZone);
+
+router
   .post('/running/test', runningUtils.insertTestSixMinutes);
 
 router

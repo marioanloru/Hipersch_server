@@ -35,7 +35,7 @@ module.exports = {
         } else {
           if (user && bcrypt.compareSync(password, user.password)) {
             //  trainer login
-            if (user.role === 'trainer') {
+            if (user.role === 'trainer' && athlete) {
               userModel
               .findOne({ email: athlete })
               .exec((err, athlete) => {

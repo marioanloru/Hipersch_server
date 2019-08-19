@@ -145,6 +145,49 @@ module.exports = {
           res.status(200).json(test);
         }
       });
+  },
+  getTrainingZone: (req, res) => {
+    runningTestModel
+      .findOne({})
+      .sort({ date: -1 })
+      .exec((err, test) => {
+        if (err) {
+          res.status(500).json({ message: 'Something went wrong' });
+        } else {
+          console.log(test);
+          const testSpeed = test.speed;
+          let trainingZone = 0;
+
+          if (testSpeed >= 11.7) {
+            trainingZone = 1;
+          }
+
+          if (testSpeed >= 12.3) {
+            trainingZone = 2;
+          }
+          
+          if (testSpeed >= 15.3) {
+            trainingZone = 3;
+          }
+
+          if (testSpeed >= 15.8) {
+            trainingZone = 4;
+          }
+
+          if (testSpeed >= 18) {
+            trainingZone = 'vam';
+          }
+
+          if (testSpeed >= 18.6) {
+            trainingZone = 6;
+          }
+
+          if (testSpeed >= 19.9) {
+            trainingZone = 7;
+          }
+          res.status(200).json({trainingZone});
+        }
+      });
   }
 
 }

@@ -8,7 +8,6 @@ module.exports = {
     let valueBelow = 0;
     let res = 0.0; 
 
-    console.log('Samples y value!!! ', samples, value);
     //  Look for value bounds
     for (let i = 0; i < samples.length; i += 1) {
       if (samples[i] === value && !valueInSample) {
