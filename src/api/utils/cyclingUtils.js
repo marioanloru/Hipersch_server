@@ -239,15 +239,12 @@ module.exports = {
       if (err) {
         res.status(500).json({ message: 'Something went wrong' });
       } else {
-        console.log('Resultaado ->', result, result.p6sec);
         const testToInsert = new cyclingTestModel({
           p6sec: result.p6sec,
           athlete: userId,
           type: 'p6sec',
           testId: uuid4()
         });
-        console.log(testToInsert);
-    
         testToInsert
           .save((err, data) => {
             if (err) {
@@ -269,14 +266,12 @@ module.exports = {
       if (err) {
         res.status(500).json({ message: 'Something went wrong' });
       } else {
-        console.log("rESULTADO: ", result);
         const testToInsert = new cyclingTestModel({
           p1min: result.p1min,
           athlete: userId,
           type: 'p1min',
           testId: uuid4()
         });
-        console.log(testToInsert);
     
         testToInsert
           .save((err, data) => {
@@ -299,7 +294,6 @@ module.exports = {
       if (err) {
         res.status(500).json({ message: 'Something went wrong' })
       } else {
-        console.log("rESULTADO: ", result);
 
         const testToInsert = new cyclingTestModel({
           p6min: result.p6min,
@@ -307,7 +301,6 @@ module.exports = {
           type: 'p6min',
           testId: uuid4()
         });
-        console.log(testToInsert);
     
         testToInsert
           .save((err, data) => {
@@ -331,7 +324,6 @@ module.exports = {
         console.log(err);
         res.status(500).json({ message: 'Something went wrong'})
       } else {
-        console.log("rESULTADO: ", result);
 
         const testToInsert = new cyclingTestModel({
           p20min: result.p20min,
@@ -339,7 +331,6 @@ module.exports = {
           type: 'p20min',
           testId: uuid4()
         });
-        console.log(testToInsert);
     
         testToInsert
           .save((err, data) => {

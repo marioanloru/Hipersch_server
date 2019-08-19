@@ -53,7 +53,6 @@ function processSixMinutesTest(distance, gender, vo2maxIndirect, mainCallback) {
       let vo2Values = _.find(res, { aspect: 'vo2max' });
       let vuanValues = _.find(res, { aspect: 'vuan' });
 
-      console.log('Valores que uso para calcular el percentil:::', samples, ' ---- ', mavValues, ' ---- ', vo2Values, ' ---- ',vuanValues);
 
       async.waterfall([
         (callback) => {
@@ -81,7 +80,6 @@ module.exports = {
   insertTestSixMinutes: (req, res) => {
     const { distance } = req.body;
     const { userId, gender} = req.user;
-    
     processSixMinutesTest(distance, gender, 45.1, (err, result) => {
       if (err) {
         console.log(err);
