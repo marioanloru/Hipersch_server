@@ -185,9 +185,12 @@ module.exports = {
           if (testSpeed >= 19.9) {
             trainingZone = 7;
           }
+
+          if (testSpeed >= 25.2) {
+            trainingZone = 'velocity';
+          }
           res.status(200).json({trainingZone});
         }
       });
   }
-
 }

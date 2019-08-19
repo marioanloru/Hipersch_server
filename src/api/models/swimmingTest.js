@@ -29,6 +29,14 @@ const swimmingTest = new Schema({
     required: true, 
     unique: true 
   },
+  timeTwoHundred: {
+    type: Number,
+    required: true
+  },
+  timeFourHundred: {
+    type: Number,
+    required: true
+  },
   date: { 
     type: Date, 
     default: Date.now 

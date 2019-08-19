@@ -83,6 +83,10 @@ router
   .post('/swimming/test', swimmingUtils.insertTest);
 
 router
+  .get('/swimming/trainingZone', swimmingUtils.getTrainingZone);
+
+
+router
   .delete('/swimming/test/:testId', swimmingUtils.deleteTest);
 
 module.exports = router;

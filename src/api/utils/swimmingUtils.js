@@ -166,8 +166,12 @@ module.exports = {
           anaThreshold: result.anaThreshold,
           lactateThreshold: result.lactateThreshold,
           athlete: userId,
+          timeTwoHundred,
+          timeFourHundred,
           testId: uuid4()
         });
+
+        console.log('Test que inserto')
     
         testToInsert
           .save((err, saveData) => {
@@ -175,6 +179,8 @@ module.exports = {
               res.status(500).json(err);
             } else {
               result.testId = testToInsert.testId;
+              result.timeFourHundred = testToInsert.timeFourHundred;
+              result.timeTwoHundred = testToInsert.timeTwoHundred;
               res.status(200).json(result);
             }
           });
@@ -189,6 +195,42 @@ module.exports = {
           res.status(500).json({ message: 'Something went wrong' });
         } else {
           res.status(200).json(test);
+        }
+      });
+  },
+  getTrainingZone: (req, res) => {
+    swimmingTestModel
+      .findOne({})
+      .sort({ date: -1 })
+      .exec((err, test) => {
+        if (err) {
+          res.status(500).json({ message: 'Something went wrong' });
+        } else {
+          console.log(test);
+          const timeTwoHundred = test.timeTwoHundred;
+          const timeFourHundred = test.timeFourHundred
+
+          let trainingZoneTwoHundred = 'aei', trainingZoneFourHundred = 'aei';
+          
+
+          if (timeTwoHundred >= 176) {
+            trainingZoneTwoHundred = 'aei';
+          }
+          
+          if (timeTwoHundred >= 182.4) {
+            trainingZoneTwoHundred = 'ael';
+          }
+
+          if (timeFourHundred >= 352.9) {
+            trainingZoneTwoHundred = 'aem';
+          }
+
+
+          if (timeFourHundred >= 365.9) {
+            trainingZoneTwoHundred = 'ael';
+          }
+
+          res.status(200).json({trainingZoneTwoHundred, trainingZoneFourHundred});
         }
       });
   }
