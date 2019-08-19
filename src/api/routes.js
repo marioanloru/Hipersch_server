@@ -26,6 +26,9 @@ router
   .post('/user/login', userService.authenticate);
 
 router
+  .post('/user/login/trainer', userService.authenticateTrainer);
+
+router
   .post('/user/register', userService.create);
 
 router
