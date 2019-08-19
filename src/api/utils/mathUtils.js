@@ -8,6 +8,7 @@ module.exports = {
     let valueBelow = 0;
     let res = 0.0; 
 
+    console.log('Samples y value!!! ', samples, value);
     //  Look for value bounds
     for (let i = 0; i < samples.length; i += 1) {
       if (samples[i] === value && !valueInSample) {
@@ -30,6 +31,17 @@ module.exports = {
       }
     }
 
+
+    //  Current value es below lower sample value
+    if (timesAbove === samples.length && timesUnder === 0) {
+      return 0.0;
+    }
+
+    //  Current value es above lower possible value
+    if (timesAbove === 0 && timesUnder === samples.length) {
+      return 1.0;
+
+    }
     if (valueInSample) {
       res = timesUnder / (timesUnder + timesAbove);
     } else {

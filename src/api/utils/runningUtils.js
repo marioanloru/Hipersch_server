@@ -10,7 +10,7 @@ function processSixMinutesTest(distance, gender, vo2maxIndirect, mainCallback) {
   const speedMS = distance/360;
   const speedKMH = speedMS * 3.6; 
   const results = {
-    speed: speedKMH,
+    speed: Math.round(speedKMH*100)/100,
     MAVvVo2max: 0,
     vo2max: 0,
     vat: 0 
@@ -52,6 +52,8 @@ function processSixMinutesTest(distance, gender, vo2maxIndirect, mainCallback) {
       let mavValues = _.find(res, { aspect: 'vvo2max' });
       let vo2Values = _.find(res, { aspect: 'vo2max' });
       let vuanValues = _.find(res, { aspect: 'vuan' });
+
+      console.log('Valores que uso para calcular el percentil:::', samples, ' ---- ', mavValues, ' ---- ', vo2Values, ' ---- ',vuanValues);
 
       async.waterfall([
         (callback) => {

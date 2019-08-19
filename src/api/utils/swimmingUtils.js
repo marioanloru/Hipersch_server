@@ -150,10 +150,16 @@ module.exports = {
     const { userId, gender, height, swimmingCategory } = req.user;
     
     const thresholds = calculateThresholds(timeFourHundred, timeTwoHundred, swimmingCategory);
-    processTest(thresholds.velocityLT, thresholds.velocityANAT, gender, height, (err, result) => {
+    processTest(thresholds.velocityLT, thresholds.velocityANAT, gender, height, (err, data) => {
       if (err) {
         res.status(500).json({ message: 'Something went wrong' });
       } else {
+        const result = {
+          indexLT: Math.floor(data.indexLT * 100) / 100,
+          indexANAT: Math.floor(data.indexANAT * 100) / 100,
+          anaThreshold: Math.floor(data.anaThreshold * 100) / 100,
+          lactateThreshold: Math.floor(data.lactateThreshold * 100) / 100
+        };
         const testToInsert = new swimmingTestModel({
           indexLT: result.indexLT,
           indexANAT: result.indexANAT,
@@ -164,7 +170,7 @@ module.exports = {
         });
     
         testToInsert
-          .save((err, data) => {
+          .save((err, saveData) => {
             if (err) {
               res.status(500).json(err);
             } else {
