@@ -23,6 +23,9 @@ router
   .get('/user/data', userService.getUserData);
 
 router
+  .get('/user/athletes', userService.getAthletes);
+
+router
   .post('/user/data', userService.updateUserData);
 
 router

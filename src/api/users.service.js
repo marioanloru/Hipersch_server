@@ -43,6 +43,7 @@ module.exports = {
                   res.status(400).json({ message: 'Could not retrieve athlete information' });
                 } else {
                   const token = jwt.sign({ email: user.email, gender: athlete.gender, role: user.role, userId: athlete.id, bodyWeight: athlete.bodyWeight, height: athlete.height, swimmingCategory: athlete.swimmingCategory}, process.env.SECRET);
+                  console.log('Token de un entrenador!');
                   res.status(200).json({ token });
                 }
               });
@@ -127,9 +128,28 @@ module.exports = {
         if (err) {
           res.status(400).json({ message: 'User data could not be modified'});
         } else {
-          res.status(200).json({ message: 'User data modified'});
+          res.status(200).json({ message: 'User data modified. Please, login in again with new token data'});
         }
       });
+  },
+  getAthletes(req, res) {
+    console.log('---> ', req.user);
+    if (req.user.role === 'trainer') {
+      userModel
+        .find({ role: 'athlete'})
+        .exec((err, result) => {
+          if (err) {
+            console.log(err);
+            res.status(400).json({ message: 'Something went wrong'});
+          } else {
+            let emails = [];
+            for (let i = 0; i < result.length; i += 1) {
+              emails.push(result[i].email);
+            }
+            res.status(200).json({ emails });
+          }
+        });
+    } else res.status(400).json({ message: 'This token has no permission for this action. This will be reported.'})
   }
 };
 
