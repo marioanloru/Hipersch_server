@@ -23,10 +23,10 @@ router
   .get('/user/data', userService.getUserData);
 
 router
-  .post('/user/login', userService.authenticate);
+  .post('/user/data', userService.updateUserData);
 
 router
-  .post('/user/login/trainer', userService.authenticateTrainer);
+  .post('/user/login', userService.authenticate);
 
 router
   .post('/user/register', userService.create);
