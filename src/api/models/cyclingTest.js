@@ -15,6 +15,10 @@ const cyclingTest = new Schema({
   p1min: { type: Number },
   p6min: { type: Number },
   p20min: { type: Number },
+  peakPower: { 
+    type: Number,
+    required: true
+  },
   type: { 
     type: String,
     required: true,

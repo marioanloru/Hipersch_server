@@ -241,6 +241,7 @@ module.exports = {
       } else {
         const testToInsert = new cyclingTestModel({
           p6sec: result.p6sec,
+          peakPower,
           athlete: userId,
           type: 'p6sec',
           testId: uuid4()
@@ -268,6 +269,7 @@ module.exports = {
       } else {
         const testToInsert = new cyclingTestModel({
           p1min: result.p1min,
+          peakPower,
           athlete: userId,
           type: 'p1min',
           testId: uuid4()
@@ -297,6 +299,7 @@ module.exports = {
 
         const testToInsert = new cyclingTestModel({
           p6min: result.p6min,
+          peakPower,
           athlete: userId,
           type: 'p6min',
           testId: uuid4()
@@ -327,6 +330,7 @@ module.exports = {
 
         const testToInsert = new cyclingTestModel({
           p20min: result.p20min,
+          peakPower,
           athlete: userId,
           type: 'p20min',
           testId: uuid4()
@@ -354,56 +358,56 @@ module.exports = {
         } else {
           let trainingZone = '';
           let trainingZoneTag = '';
-          let testData = Number(data.p20min);
+          let peakPower = data.peakPower;
 
-          if (testData < 124 && testData) {
-            res.status(400).json({ message: 'There are no test to get training zone.' });
-          }
-
-          if (testData >= 124 && testData <= 178) {
+          if (peakPower >= 124 && peakPower <= 178) {
             trainingZone = '0';
             trainingZoneTag = 'Recovery'
           }
 
-          if (testData >= 181 && testData <= 242) {
+          if (peakPower >= 181 && peakPower <= 242) {
             trainingZone = '1';
             trainingZoneTag = 'Aerobic Threshold'
           }
 
-          if (testData >= 245 && testData <= 306) {
+          if (peakPower >= 245 && peakPower <= 306) {
             trainingZone = '2';
           }
 
-          if (testData >= 307 && testData <= 339) {
+          if (peakPower >= 307 && peakPower <= 339) {
             trainingZone = '3';
             trainingZoneTag = 'Anaerobic Threshold'
           }
 
-          if (testData >= 342 && testData <= 371) {
+          if (peakPower >= 342 && peakPower <= 371) {
             trainingZone = '4';
           }
 
-          if (testData >= 372 && testData <= 387.6) {
+          if (peakPower >= 372 && peakPower <= 387.6) {
             trainingZone = '4';
             trainingZoneTag = 'Max Power'
           }
 
-          if (testData >= 389 && testData <= 404) {
+          if (peakPower >= 389 && peakPower <= 404) {
             trainingZone = '5';
           }
 
-          if (testData >= 405 && testData <= 485) {
+          if (peakPower >= 405 && peakPower <= 485) {
             trainingZone = '6';
           }
 
-          if (testData >= 969 && testData <= 1195) {
+          if (peakPower >= 969 && peakPower <= 1195) {
             trainingZone = '7';
           }
           
           if (trainingZone) {
             res.status(200).json({ trainingZone, trainingZoneTag });
           } else {
-            res.status(500).json({ message: 'Something went wrong' });
+            if (peakPower < 124 && peakPower) {
+              res.status(400).json({ message: 'There are no tests to get training zone.' });
+            } else {
+              res.status(500).json({ message: 'Something went wrong' });
+            }
           }
         }
       })
