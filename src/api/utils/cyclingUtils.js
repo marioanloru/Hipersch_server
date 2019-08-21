@@ -344,6 +344,70 @@ module.exports = {
       }
     });
   },
+  getTrainingZone: (req, res) => {
+    cyclingTestModel
+      .findOne({ type: 'p20min'})
+      .sort({ date: -1 })
+      .exec((err, data) => {
+        if (err) {
+          res.status(500).json({ message: 'Something went wrong' });
+        } else {
+          let trainingZone = '';
+          let trainingZoneTag = '';
+          let testData = Number(data.p20min);
+
+          if (testData < 124 && testData) {
+            res.status(400).json({ message: 'There are no test to get training zone.' });
+          }
+
+          if (testData >= 124 && testData <= 178) {
+            trainingZone = '0';
+            trainingZoneTag = 'Recovery'
+          }
+
+          if (testData >= 181 && testData <= 242) {
+            trainingZone = '1';
+            trainingZoneTag = 'Aerobic Threshold'
+          }
+
+          if (testData >= 245 && testData <= 306) {
+            trainingZone = '2';
+          }
+
+          if (testData >= 307 && testData <= 339) {
+            trainingZone = '3';
+            trainingZoneTag = 'Anaerobic Threshold'
+          }
+
+          if (testData >= 342 && testData <= 371) {
+            trainingZone = '4';
+          }
+
+          if (testData >= 372 && testData <= 387.6) {
+            trainingZone = '4';
+            trainingZoneTag = 'Max Power'
+          }
+
+          if (testData >= 389 && testData <= 404) {
+            trainingZone = '5';
+          }
+
+          if (testData >= 405 && testData <= 485) {
+            trainingZone = '6';
+          }
+
+          if (testData >= 969 && testData <= 1195) {
+            trainingZone = '7';
+          }
+          
+          if (trainingZone) {
+            res.status(200).json({ trainingZone, trainingZoneTag });
+          } else {
+            res.status(500).json({ message: 'Something went wrong' });
+          }
+        }
+      })
+  },
   deleteTest: (req, res) => {
     const { testId } = req.params;
     cyclingTestModel

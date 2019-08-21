@@ -77,6 +77,8 @@ router
   .delete('/cycling/test/:testId', cyclingUtils.deleteTest);
 
 router
+  .get('/cycling/trainingZone', cyclingUtils.getTrainingZone);
+router
   .get('/swimming/test', swimmingUtils.getUserTests);
 
 router

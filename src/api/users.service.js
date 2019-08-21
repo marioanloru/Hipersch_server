@@ -43,7 +43,6 @@ module.exports = {
                   res.status(400).json({ message: 'Could not retrieve athlete information' });
                 } else {
                   const token = jwt.sign({ email: user.email, gender: athlete.gender, role: user.role, userId: athlete.id, bodyWeight: athlete.bodyWeight, height: athlete.height, swimmingCategory: athlete.swimmingCategory}, process.env.SECRET);
-                  console.log('Token de un entrenador!');
                   res.status(200).json({ token });
                 }
               });
@@ -54,7 +53,7 @@ module.exports = {
 
             }
           } else {
-            res.status(400).json({ message: 'Login credentials incorrect' });
+            res.status(401).json({ message: 'Login credentials incorrect' });
           }
         }
       });
@@ -70,7 +69,7 @@ module.exports = {
           res.status(200).json({ message: 'User already created' });
         } else {
           if ((role === 'admin') && (req.user.role !== 'admin')) {
-            res.status(400).json('You do not have permissions for this action. This action will be reported');
+            res.status(401).json('You do not have permissions for this action. This action will be reported');
           } else {
             if (role === 'athlete' || role === 'trainer') {
               if (validateFields(email, password, lastName, firstName, gender, bodyWeight, height, swimmingCategory)) {
@@ -87,7 +86,7 @@ module.exports = {
                   });
               } else res.status(400).json({ message: 'User could not be created' });
             } else {
-              res.status(200).json({ message: 'User role invalid' });
+              res.status(401).json({ message: 'User role invalid' });
             }
           }
         }
@@ -107,7 +106,7 @@ module.exports = {
           }
         });
     } else {
-      res.status(400).json({ message: 'You do not have permissions for this action. This action will be reported'});
+      res.status(401).json({ message: 'You do not have permissions for this action. This action will be reported'});
     }
   },
   getUserData(req, res) {
@@ -133,7 +132,6 @@ module.exports = {
       });
   },
   getAthletes(req, res) {
-    console.log('---> ', req.user);
     if (req.user.role === 'trainer') {
       userModel
         .find({ role: 'athlete'})
@@ -149,7 +147,7 @@ module.exports = {
             res.status(200).json({ emails });
           }
         });
-    } else res.status(400).json({ message: 'This token has no permission for this action. This will be reported.'})
+    } else res.status(401).json({ message: 'This token has no permission for this action. This will be reported.'})
   }
 };
 
