@@ -207,31 +207,30 @@ module.exports = {
           res.status(500).json({ message: 'Something went wrong' });
         } else {
           console.log(test);
-          const timeTwoHundred = test.timeTwoHundred;
-          const timeFourHundred = test.timeFourHundred
-
-          let trainingZoneTwoHundred = 'aei', trainingZoneFourHundred = 'aei';
-          
-
-          if (timeTwoHundred >= 176) {
-            trainingZoneTwoHundred = 'aei';
-          }
-          
-          if (timeTwoHundred >= 182.4) {
-            trainingZoneTwoHundred = 'ael';
-          }
-
-          if (timeFourHundred >= 352.9) {
-            trainingZoneTwoHundred = 'aem';
-          }
-
-
-          if (timeFourHundred >= 365.9) {
-            trainingZoneTwoHundred = 'ael';
-          }
-
-          res.status(200).json({trainingZoneTwoHundred, trainingZoneFourHundred});
+          let data = this.calculateTrainingZone(test.timeTwoHundred, test.timeFourHundred);
+          res.status(200).json({ trainingZoneTwoHundred: data.trainingZoneTwoHundred, trainingZoneFourHundred: data.trainingZoneFourHundred});
         }
       });
+  },
+  calculateTrainingZone: (timeTwoHundred, timeFourHundred) => {
+    let trainingZoneTwoHundred = 'aei', trainingZoneFourHundred = 'aei';
+
+    if (timeTwoHundred >= 176) {
+      trainingZoneTwoHundred = 'aei';
+    }
+    
+    if (timeTwoHundred >= 182.4) {
+      trainingZoneTwoHundred = 'ael';
+    }
+
+    if (timeFourHundred >= 352.9) {
+      trainingZoneTwoHundred = 'aem';
+    }
+
+    if (timeFourHundred >= 365.9) {
+      trainingZoneTwoHundred = 'ael';
+    }
+
+    return { trainingZoneTwoHundred, trainingZoneFourHundred };
   }
 }

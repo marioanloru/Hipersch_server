@@ -359,58 +359,69 @@ module.exports = {
           let trainingZone = '';
           let trainingZoneTag = '';
           let peakPower = data.peakPower;
-
-          if (peakPower >= 124 && peakPower <= 178) {
-            trainingZone = '0';
-            trainingZoneTag = 'Recovery'
-          }
-
-          if (peakPower >= 181 && peakPower <= 242) {
-            trainingZone = '1';
-            trainingZoneTag = 'Aerobic Threshold'
-          }
-
-          if (peakPower >= 245 && peakPower <= 306) {
-            trainingZone = '2';
-          }
-
-          if (peakPower >= 307 && peakPower <= 339) {
-            trainingZone = '3';
-            trainingZoneTag = 'Anaerobic Threshold'
-          }
-
-          if (peakPower >= 342 && peakPower <= 371) {
-            trainingZone = '4';
-          }
-
-          if (peakPower >= 372 && peakPower <= 387.6) {
-            trainingZone = '4';
-            trainingZoneTag = 'Max Power'
-          }
-
-          if (peakPower >= 389 && peakPower <= 404) {
-            trainingZone = '5';
-          }
-
-          if (peakPower >= 405 && peakPower <= 485) {
-            trainingZone = '6';
-          }
-
-          if (peakPower >= 969 && peakPower <= 1195) {
-            trainingZone = '7';
-          }
+          let result = this.calculateTrainingZone(data.peakPower);
           
-          if (trainingZone) {
-            res.status(200).json({ trainingZone, trainingZoneTag });
+          if (result.error) {
+            res.status(400).json({ message: result.error });
           } else {
-            if (peakPower < 124 && peakPower) {
-              res.status(400).json({ message: 'There are no tests to get training zone.' });
-            } else {
-              res.status(500).json({ message: 'Something went wrong' });
-            }
+            res.status(200).json({ trainingZone: result.trainingZone, trainingZoneTag: result.trainingZoneTag });
           }
         }
-      })
+      });
+  },
+  calculateTrainingZone: (peakPower) => {
+    let trainingZone = '';
+    let trainingZoneTag = '';
+
+    if (peakPower >= 124 && peakPower <= 178) {
+      trainingZone = '0';
+      trainingZoneTag = 'Recovery'
+    }
+
+    if (peakPower >= 181 && peakPower <= 242) {
+      trainingZone = '1';
+      trainingZoneTag = 'Aerobic Threshold'
+    }
+
+    if (peakPower >= 245 && peakPower <= 306) {
+      trainingZone = '2';
+    }
+
+    if (peakPower >= 307 && peakPower <= 339) {
+      trainingZone = '3';
+      trainingZoneTag = 'Anaerobic Threshold'
+    }
+
+    if (peakPower >= 342 && peakPower <= 371) {
+      trainingZone = '4';
+    }
+
+    if (peakPower >= 372 && peakPower <= 387.6) {
+      trainingZone = '4';
+      trainingZoneTag = 'Max Power'
+    }
+
+    if (peakPower >= 389 && peakPower <= 404) {
+      trainingZone = '5';
+    }
+
+    if (peakPower >= 405 && peakPower <= 485) {
+      trainingZone = '6';
+    }
+
+    if (peakPower >= 969 && peakPower <= 1195) {
+      trainingZone = '7';
+    }
+    
+    if (trainingZone) {
+      return { trainingZone, trainingZoneTag };
+    } else {
+      if (peakPower < 124 && peakPower) {
+        return { error: 'There are no tests to get training zone.' };
+      } else {
+        return { error: 'Something went wrong' };
+      };
+    }
   },
   deleteTest: (req, res) => {
     const { testId } = req.params;

@@ -1,7 +1,14 @@
 const jwt = require('jsonwebtoken');
 const userModel = require('./models/user');
-const bcrypt = require('bcryptjs');
+const runningTestModel = require('./models/runningTest');
+const cyclingTestModel = require('./models/cyclingTest');
+const swimmingTestModel = require('./models/swimmingTest');
 
+const runningUtils = require('../api/utils/runningUtils');
+const swimmingUtils = require('../api/utils/swimmingUtils');
+const cyclingUtils = require('../api/utils/cyclingUtils');
+
+const bcrypt = require('bcryptjs');
 
 function validateFields(email, password, lastName, firstName, gender, bodyWeight, height, swimmingCategory) {
   let validation = true;
@@ -148,6 +155,121 @@ module.exports = {
           }
         });
     } else res.status(401).json({ message: 'This token has no permission for this action. This will be reported.'})
+  },
+  getProgress(req, res) {
+    console.log('En get progress!!!');
+    this.getProgressTests((err, data) => {
+      console.log('Lo que se ha recuperado de getProgressTests!!', data);
+
+      const keys = Object.keys(data);
+
+      console.log('Las keys que se tienen:: ', keys);
+      const result = {
+
+      };
+      let trainingZone;
+      for (let i = 0; i < keys.length; i += 1) {
+        if (!(keys[i] in result)) {
+          result[keys[i]] = {};
+        }
+
+        switch (keys[i]) {
+          case 'running':
+            trainingZone = runningUtils.calculateTrainingZone(data[keys[i]].speed);
+            result[keys[i]].value = data[keys[i]].speed;
+            result[keys[i]].trainingZone = trainingZone;
+            break;
+          case 'swimming':
+            trainingZone = swimmingUtils.calculateTrainingZone(data[keys[i]].timeTwoHundred, data[keys[i]].timeFourHundred);
+            result[keys[i]].valueTwoHundred = timeTwoHundred;
+            result[keys[i]].valueFourHundred =  timeFourHundred;
+            result[keys[i]].trainingZoneTwoHundred = trainingZoneTwoHundred;
+            result[keys[i]].trainingZoneFourHundred = trainingZoneFourHundred;
+            break;
+          case 'cycling':
+            trainingZone = cyclingUtils.calculateTrainingZone(data[keys[i]].peakPower);
+            result[keys[i]].value = data[keys[i]].p20min;
+            result[keys[i]].trainingZone = trainingZone;
+            break;
+          default:
+            break;
+        }
+      }
+
+      res.status(200).json({ data: result });
+    });
+  },
+  getProgressTests(callback) {
+    const result = {};
+
+    runningTestModel
+      .find({ athlete: userId })
+      .sort({ date: -1 })
+      .limit(3)
+      .exec((err, runningData) => {
+        if (err) {
+          callback(err);
+        } else {
+          result.running = runningData;
+          swimmingTestModel
+            .find({ athlete: userId })
+            .sort({ date: -1 })
+            .limit(3)
+            .exec((err, swimmingData) => {
+              if (err) {
+                callback(err);
+              } else {
+                result.swimming = swimmingData;
+                cyclingTestModel
+                  .find({ athlete: userId, type: 'p6sec' })
+                  .sort({ date: -1 })
+                  .limit(3)
+                  .exec((err, cyclingData) => {
+                    if (err) {
+                      callback(err);
+                    } else {
+                      result.cycling = cyclingData;
+                      cyclingTestModel
+                        .find({ athlete: userId, type: 'p1min' })
+                        .sort({ date: -1 })
+                        .limit(3)
+                        .exec((err, cyclingDataOne) => {
+                          if (err) {
+                            callback(err);
+                          } else {
+                            result.cyclingOne = cyclingDataOne;
+                            cyclingTestModel
+                              .find({ athlete: userId, type: 'p6min' })
+                              .sort({ date: -1 })
+                              .limit(3)
+                              .exec((err, cyclingDataSix) => {
+                                if (err) {
+                                  callback(err);
+                                } else {
+                                  result.cyclingSix = cyclingDataSix;
+                                  cyclingTestModel
+                                    .find({ athlete: userId, type: 'p20sec' })
+                                    .sort({ date: -1 })
+                                    .limit(3)
+                                    .exec((err, cyclingDataTwenty) => {
+                                      if (err) {
+                                        callback(err);
+                                      } else {
+                                        result.cyclingTwenty = cyclingDataTwenty;
+                                        callback(null, result)
+                                      }
+                                    });
+                                }
+                              });
+                          }
+                        });
+                    }
+                  });
+              }
+            });
+
+        }
+      });
   }
 };
 
