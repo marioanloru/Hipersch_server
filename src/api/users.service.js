@@ -26,7 +26,7 @@ function validateFields(email, password, lastName, firstName, gender, bodyWeight
 }
 module.exports = {
   authenticate(req, res) {
-    const { email, password, athlete} = req.body;
+    const { email, password, athlete } = req.body;
     userModel
       .findOne({ email })
       .exec((err, user) => {
