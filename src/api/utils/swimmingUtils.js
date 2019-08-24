@@ -207,7 +207,7 @@ module.exports = {
           res.status(500).json({ message: 'Something went wrong' });
         } else {
           console.log(test);
-          let data = this.calculateTrainingZone(test.timeTwoHundred, test.timeFourHundred);
+          let data = module.exports.calculateTrainingZone(test.timeTwoHundred, test.timeFourHundred);
           res.status(200).json({ trainingZoneTwoHundred: data.trainingZoneTwoHundred, trainingZoneFourHundred: data.trainingZoneFourHundred});
         }
       });

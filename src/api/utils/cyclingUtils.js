@@ -359,7 +359,7 @@ module.exports = {
           let trainingZone = '';
           let trainingZoneTag = '';
           let peakPower = data.peakPower;
-          let result = this.calculateTrainingZone(data.peakPower);
+          let result = module.exports.calculateTrainingZone(data.peakPower);
           
           if (result.error) {
             res.status(400).json({ message: result.error });

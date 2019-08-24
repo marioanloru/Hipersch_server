@@ -156,13 +156,13 @@ module.exports = {
         } else {
           console.log(test);
 
-          let trainingZone = this.calculateTrainingZone(test.speed);
+          let trainingZone = module.exports.calculateTrainingZone(test.speed);
           res.status(200).json({ trainingZone });
         }
       });
   },
   calculateTrainingZone: (speed) => {
-    const testSpeed = test.speed;
+    const testSpeed = speed;
     let trainingZone = 0;
 
     if (testSpeed >= 11.7) {
