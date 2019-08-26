@@ -14,10 +14,10 @@ router
 
   
 router
-  .get('/running/test/:inicio/:fin', runningUtils.getUserTestsByDate);
+  .get('/running/testByDate/:inicio/:fin', runningUtils.getUserTestsByDate);
 
 router
-  .get('/running/test', runningUtils.getUserTests);
+  .get('/running/test/:limit/:offset', runningUtils.getUserTests);
 
 router
   .get('/user/data', userService.getUserData);
@@ -50,7 +50,7 @@ router
   .delete('/running/test/:testId', runningUtils.deleteTest);
 
 router
-  .get('/cycling/test', cyclingUtils.getUserTests);
+  .get('/cycling/test/:limit/:offset', cyclingUtils.getUserTests);
 
 router
   .get('/cycling/test/sixsec', cyclingUtils.getUserTestsSixSec);
@@ -82,7 +82,7 @@ router
 router
   .get('/cycling/trainingZone', cyclingUtils.getTrainingZone);
 router
-  .get('/swimming/test', swimmingUtils.getUserTests);
+  .get('/swimming/test/:limit/:offset', swimmingUtils.getUserTests);
 
 router
   .post('/swimming/test', swimmingUtils.insertTest);

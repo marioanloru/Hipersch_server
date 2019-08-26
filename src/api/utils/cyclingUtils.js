@@ -126,11 +126,15 @@ function processPeakTest(peakPower, gender, bodyWeight, aspect, mainCallback) {
 module.exports = {
   getUserTests: (req, res) => {
     const { userId } = req.user;
+    let { limit, offset } = req.params;
+    limit = Number(limit);
+    offset = Number(offset);
     const result = [];
     cyclingTestModel
       .find({ athlete: userId, type: 'p6sec' })
       .sort({ date: -1 })
-      .limit(3)
+      .limit(limit)
+      .skip(offset)
       .exec((err, data) => {
         if (err) {
           res.status(500).json(err);
@@ -139,7 +143,8 @@ module.exports = {
           cyclingTestModel
             .find({ athlete: userId, type: 'p1min' })
             .sort({ date: -1 })
-            .limit(3)
+            .limit(limit)
+            .skip(offset)
             .exec((err, data) => {
               if (err) {
                 res.status(500).json(err);
@@ -148,7 +153,8 @@ module.exports = {
                 cyclingTestModel
                   .find({ athlete: userId, type: 'p6min' })
                   .sort({ date: -1 })
-                  .limit(3)
+                  .limit(limit)
+                  .skip(offset)
                   .exec((err, data) => {
                     if (err) {
                       res.status(500).json(err);
@@ -157,7 +163,8 @@ module.exports = {
                       cyclingTestModel
                         .find({ athlete: userId, type: 'p20min' })
                         .sort({ date: -1 })
-                        .limit(3)
+                        .limit(limit)
+                        .skip(offset)
                         .exec((err, data) => {
                           if (err) {
                             res.status(500).json(err);

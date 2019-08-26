@@ -132,10 +132,14 @@ function calculateThresholds(timeFourHundred, timeTwoHundred, swimmingCategory) 
 module.exports = {
   getUserTests: (req, res) => {
     const { userId } = req.user;
+    let { limit, offset } = req.params;
+    limit = Number(limit);
+    offset = Number(offset);
     swimmingTestModel
       .find({ athlete: userId })
       .sort({ date: -1 })
-      .limit(3)
+      .limit(limit)
+      .skip(offset)
       .exec((err, data) => {
         if (err) {
           res.status(500).json(err);

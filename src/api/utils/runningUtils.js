@@ -74,12 +74,10 @@ function processSixMinutesTest(distance, gender, vo2maxIndirect, mainCallback) {
     });
 }
 
-
-
 module.exports = {
   insertTestSixMinutes: (req, res) => {
     const { distance } = req.body;
-    const { userId, gender} = req.user;
+    const { userId, gender } = req.user;
     processSixMinutesTest(distance, gender, 45.1, (err, result) => {
       if (err) {
         console.log(err);
@@ -109,13 +107,18 @@ module.exports = {
   },
   getUserTests: (req, res) => {
     const { userId } = req.user;
+    let { limit, offset } = req.params;
+    limit = Number(limit);
+    offset = Number(offset);
     runningTestModel
       .find({ athlete: userId })
       .sort({ date: -1 })
-      .limit(3)
+      .skip(offset)
+      .limit(limit)
       .exec((err, data) => {
+        console.log(err, data);
         if (err) {
-          res.status(500).json(err);
+          res.status(500).json({ message: "Something went wrong." });
         } else {
           res.status(200).json(data);
         }
@@ -126,7 +129,7 @@ module.exports = {
     const { userId } = req.user;
     const { max, min } = req.params;
     runningTestModel
-      .find(user)
+      .find({ athlete: userId})
       .exec((err, data) => {
         if (err) {
           res.status(500).json(err);
