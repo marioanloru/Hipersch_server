@@ -127,10 +127,11 @@ module.exports = {
   },
   updateUserData(req, res) {
     const { height, bodyWeight } = req.body;
-
+    console.log('Parametros -> ', height, bodyWeight);
     userModel
       .updateOne({ email: req.user.email }, { $set: { height, bodyWeight }}, { omitUndefined: true })
       .exec((err, result) => {
+        console.log(err, result);
         if (err) {
           res.status(400).json({ message: 'User data could not be modified'});
         } else {
@@ -145,7 +146,7 @@ module.exports = {
         .exec((err, result) => {
           if (err) {
             console.log(err);
-            res.status(400).json({ message: 'Something went wrong'});
+            res.status(400).json({ message: 'Something failed'});
           } else {
             let emails = [];
             for (let i = 0; i < result.length; i += 1) {
@@ -157,49 +158,56 @@ module.exports = {
     } else res.status(401).json({ message: 'This token has no permission for this action. This will be reported.'})
   },
   getProgress(req, res) {
-    console.log('En get progress!!!');
-    this.getProgressTests((err, data) => {
-      console.log('Lo que se ha recuperado de getProgressTests!!', data);
-
-      const keys = Object.keys(data);
-
-      console.log('Las keys que se tienen:: ', keys);
-      const result = {
-
-      };
-      let trainingZone;
-      for (let i = 0; i < keys.length; i += 1) {
-        if (!(keys[i] in result)) {
-          result[keys[i]] = {};
+    console.log('En get progress!!!', req.user);
+    userModel
+      .findOne({ email: req.email })
+      .exec((err, userId) => {
+        if (err) {
+          res.status(400).json({ message: "Something failed" });
         }
-
-        switch (keys[i]) {
-          case 'running':
-            trainingZone = runningUtils.calculateTrainingZone(data[keys[i]].speed);
-            result[keys[i]].value = data[keys[i]].speed;
-            result[keys[i]].trainingZone = trainingZone;
-            break;
-          case 'swimming':
-            trainingZone = swimmingUtils.calculateTrainingZone(data[keys[i]].timeTwoHundred, data[keys[i]].timeFourHundred);
-            result[keys[i]].valueTwoHundred = timeTwoHundred;
-            result[keys[i]].valueFourHundred =  timeFourHundred;
-            result[keys[i]].trainingZoneTwoHundred = trainingZoneTwoHundred;
-            result[keys[i]].trainingZoneFourHundred = trainingZoneFourHundred;
-            break;
-          case 'cycling':
-            trainingZone = cyclingUtils.calculateTrainingZone(data[keys[i]].peakPower);
-            result[keys[i]].value = data[keys[i]].p20min;
-            result[keys[i]].trainingZone = trainingZone;
-            break;
-          default:
-            break;
-        }
-      }
-
-      res.status(200).json({ data: result });
-    });
+        module.exports.getProgressTests(userId, (err, data) => {
+          console.log('Lo que se ha recuperado de getProgressTests!!', data);
+    
+          const keys = Object.keys(data);
+    
+          console.log('Las keys que se tienen:: ', keys);
+          const result = {
+    
+          };
+          let trainingZone;
+          for (let i = 0; i < keys.length; i += 1) {
+            if (!(keys[i] in result)) {
+              result[keys[i]] = {};
+            }
+    
+            switch (keys[i]) {
+              case 'running':
+                trainingZone = runningUtils.calculateTrainingZone(data[keys[i]].speed);
+                result[keys[i]].value = data[keys[i]].speed;
+                result[keys[i]].trainingZone = trainingZone;
+                break;
+              case 'swimming':
+                trainingZone = swimmingUtils.calculateTrainingZone(data[keys[i]].timeTwoHundred, data[keys[i]].timeFourHundred);
+                result[keys[i]].valueTwoHundred = timeTwoHundred;
+                result[keys[i]].valueFourHundred =  timeFourHundred;
+                result[keys[i]].trainingZoneTwoHundred = trainingZoneTwoHundred;
+                result[keys[i]].trainingZoneFourHundred = trainingZoneFourHundred;
+                break;
+              case 'cycling':
+                trainingZone = cyclingUtils.calculateTrainingZone(data[keys[i]].peakPower);
+                result[keys[i]].value = data[keys[i]].p20min;
+                result[keys[i]].trainingZone = trainingZone;
+                break;
+              default:
+                break;
+            }
+          }
+    
+          res.status(200).json({ data: result });
+        });
+      });
   },
-  getProgressTests(callback) {
+  getProgressTests(userId, callback) {
     const result = {};
 
     runningTestModel
@@ -207,6 +215,7 @@ module.exports = {
       .sort({ date: -1 })
       .limit(3)
       .exec((err, runningData) => {
+        console.log('Running --> ', err, runningData);
         if (err) {
           callback(err);
         } else {
@@ -216,6 +225,7 @@ module.exports = {
             .sort({ date: -1 })
             .limit(3)
             .exec((err, swimmingData) => {
+              console.log('Running --> ', err, swimmingData);
               if (err) {
                 callback(err);
               } else {
@@ -225,6 +235,7 @@ module.exports = {
                   .sort({ date: -1 })
                   .limit(3)
                   .exec((err, cyclingData) => {
+                    console.log('Running --> ', err, cyclingData);
                     if (err) {
                       callback(err);
                     } else {
