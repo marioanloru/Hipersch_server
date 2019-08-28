@@ -198,7 +198,7 @@ module.exports = {
         if (err) {
           res.status(500).json({ message: 'Something went wrong' });
         } else {
-          res.status(200).json(test);
+          res.status(200).json({ message: 'Test deleted. '});
         }
       });
   },

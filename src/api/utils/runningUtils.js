@@ -139,13 +139,15 @@ module.exports = {
       });
   },
   deleteTest: (req, res) => {
+    console.log("Borrando test!");
     const { testId } = req.params;
     runningTestModel
-      .deleteOne({ testId }, (err) => {
+      .deleteOne({ testId }, (err, test) => {
         if (err) {
+          console.log(err);
           res.status(500).json({ message: 'Something went wrong' });
         } else {
-          res.status(200).json(test);
+          res.status(200).json({ message: 'Test deleted. '});
         }
       });
   },
