@@ -192,7 +192,7 @@ module.exports = {
     });
   },
   deleteTest: (req, res) => {
-    const { testId } = req.body;
+    const { testId } = req.params;
     swimmingTestModel
       .deleteOne({ testId }, (err) => {
         if (err) {
