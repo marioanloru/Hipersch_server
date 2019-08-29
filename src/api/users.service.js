@@ -152,10 +152,10 @@ module.exports = {
           } else {
             let emails = [];
             for (let i = 0; i < result.length; i += 1) {
-              emails.push(result[i].email);
+              emails.push({ email: result[i].email});
             }
             console.log("Respondo con: ", {emails});
-            res.status(200).json({ emails });
+            res.status(200).json(emails);
           }
         });
     } else {
