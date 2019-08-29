@@ -140,6 +140,8 @@ module.exports = {
       });
   },
   getAthletes(req, res) {
+    console.log("rol del usuario en get athletes!!");
+    console.log(req.user.role);
     if (req.user.role === 'trainer') {
       userModel
         .find({ role: 'athlete'})
@@ -152,10 +154,14 @@ module.exports = {
             for (let i = 0; i < result.length; i += 1) {
               emails.push(result[i].email);
             }
+            console.log("Respondo con: ", {emails});
             res.status(200).json({ emails });
           }
         });
-    } else res.status(401).json({ message: 'This token has no permission for this action. This will be reported.'})
+    } else {
+      console.log("Usuario sin permisos!");
+      res.status(401).json({ message: 'This token has no permission for this action. This will be reported.'})
+    }
   },
   getProgress(req, res) {
     console.log('En get progress!!!', req.user);
