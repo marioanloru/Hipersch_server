@@ -47,7 +47,13 @@ router
   .post('/running/test', runningUtils.insertTestSixMinutes);
 
 router
+  .get('/running/progress', runningUtils.getProgress);
+
+router
   .delete('/running/test/:testId', runningUtils.deleteTest);
+
+router
+  .get('/cycling/progress', cyclingUtils.getProgress);
 
 router
   .get('/cycling/test/:limit/:offset', cyclingUtils.getUserTests);
@@ -90,6 +96,8 @@ router
 router
   .get('/swimming/trainingZone', swimmingUtils.getTrainingZone);
 
+router
+  .get('/swimming/progress', swimmingUtils.getProgress);
 
 router
   .delete('/swimming/test/:testId', swimmingUtils.deleteTest);

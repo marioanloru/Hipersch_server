@@ -377,51 +377,69 @@ module.exports = {
       });
   },
   calculateTrainingZone: (peakPower) => {
-    let trainingZone = '';
+    let trainingZone = '0';
     let trainingZoneTag = '';
+    let min, max = 124;
 
     if (peakPower >= 124 && peakPower <= 178) {
+      max = 178
       trainingZone = '0';
       trainingZoneTag = 'Recovery'
     }
 
     if (peakPower >= 181 && peakPower <= 242) {
+      min = 181;
+      max = 242;
       trainingZone = '1';
       trainingZoneTag = 'Aerobic Threshold'
     }
 
     if (peakPower >= 245 && peakPower <= 306) {
+      min = 245;
+      max = 306;
       trainingZone = '2';
     }
 
     if (peakPower >= 307 && peakPower <= 339) {
+      min = 307;
+      max = 339;
       trainingZone = '3';
       trainingZoneTag = 'Anaerobic Threshold'
     }
 
     if (peakPower >= 342 && peakPower <= 371) {
+      min = 342;
+      max = 371;
       trainingZone = '4';
     }
 
     if (peakPower >= 372 && peakPower <= 387.6) {
+      min = 372;
+      max = 387.6;
       trainingZone = '4';
       trainingZoneTag = 'Max Power'
     }
 
     if (peakPower >= 389 && peakPower <= 404) {
+      min = 389;
+      max = 404;
       trainingZone = '5';
     }
 
     if (peakPower >= 405 && peakPower <= 485) {
+      min = 405;
+      max = 485;
       trainingZone = '6';
     }
 
     if (peakPower >= 969 && peakPower <= 1195) {
+      min = 969;
+      max = 1195;
       trainingZone = '7';
     }
     
     if (trainingZone) {
-      return { trainingZone, trainingZoneTag };
+      return { trainingZone, trainingZoneTag, min, max };
     } else {
       if (peakPower < 124 && peakPower) {
         return { error: 'There are no tests to get training zone.' };
@@ -438,6 +456,36 @@ module.exports = {
           res.status(500).json({ message: 'Something went wrong' });
         } else {
           res.status(200).json({ message: 'Test deleted. '});
+        }
+      });
+  },
+  getProgress: (req, res) => {
+    const { userId } = req.user;
+    let { limit, offset } = req.params;
+    limit = Number(limit);
+    offset = Number(offset);
+    console.log('BUsco runnint test con este id:', userId);
+    cyclingTestModel
+      .find({ athlete: userId })
+      .sort({ date: -1 })
+      .limit(5)
+      .exec((err, tests) => {
+        if (err) {
+          res.status(500).json({ message: "Something went wrong." });
+        } else {
+          console.log("testsss::", tests);
+          const output = [];
+          for (let i = 0; i < tests.length; i += 1) {
+            let data = {};
+            console.log('--->', );
+            let trainingZone = module.exports.calculateTrainingZone(tests[i].peakPower);
+            data.trainingZone = trainingZone.trainingZone;
+            data.min = trainingZone.min;
+            data.max = trainingZone.max;
+            output.push(data);
+          }
+          console.log('Resultado!! ', output);
+          res.status(200).json(output);
         }
       });
   }

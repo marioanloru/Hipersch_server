@@ -161,7 +161,7 @@ module.exports = {
         } else {
           console.log(test);
 
-          let trainingZone = module.exports.calculateTrainingZone(test.speed);
+          let trainingZone = module.exports.calculateTrainingZone(test.speed).trainingZone;
           res.status(200).json({ trainingZone });
         }
       });
@@ -169,38 +169,84 @@ module.exports = {
   calculateTrainingZone: (speed) => {
     const testSpeed = speed;
     let trainingZone = 0;
+    let min, max = 0;
 
     if (testSpeed >= 11.7) {
+      max = 11.7;
       trainingZone = 1;
     }
 
     if (testSpeed >= 12.3) {
+      min = 11.7;
+      max = 12.3;
       trainingZone = 2;
     }
     
     if (testSpeed >= 15.3) {
+      min = 12.3;
+      max = 15.3;
       trainingZone = 3;
     }
 
     if (testSpeed >= 15.8) {
+      min = 15.3;
+      max = 15.8;
       trainingZone = 4;
     }
 
     if (testSpeed >= 18) {
+      min = 15.8;
+      max = 18;
       trainingZone = 'vam';
     }
 
     if (testSpeed >= 18.6) {
+      min = 18;
+      max = 18.6;
       trainingZone = 6;
     }
 
     if (testSpeed >= 19.9) {
+      min = 18.6;
+      max = 19.9;
       trainingZone = 7;
     }
 
     if (testSpeed >= 25.2) {
+      min = 19.9;
+      max = 25.2;
       trainingZone = 'velocity';
     }
-    return trainingZone;
+    return { trainingZone, min, max };
+  },
+  getProgress: (req, res) => {
+    const { userId } = req.user;
+    let { limit, offset } = req.params;
+    limit = Number(limit);
+    offset = Number(offset);
+    console.log('BUsco runnint test con este id:', userId);
+    runningTestModel
+      .find({ athlete: userId })
+      .sort({ date: -1 })
+      .limit(5)
+      .exec((err, tests) => {
+        if (err) {
+          res.status(500).json({ message: "Something went wrong." });
+        } else {
+          console.log("testsss::", tests);
+          const output = [];
+          for (let i = 0; i < tests.length; i += 1) {
+            let data = {};
+            console.log('--->', );
+            let trainingZone = module.exports.calculateTrainingZone(tests[i].speed);
+            data.trainingZone = trainingZone.trainingZone;
+            data.min = trainingZone.min;
+            data.max = trainingZone.max;
+            output.push(data);
+          }
+          console.log('Resultado!! ', output);
+          res.status(200).json(output);
+        }
+      });
   }
 };

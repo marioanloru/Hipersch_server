@@ -217,24 +217,65 @@ module.exports = {
       });
   },
   calculateTrainingZone: (timeTwoHundred, timeFourHundred) => {
+    console.log(timeTwoHundred, timeFourHundred);
     let trainingZoneTwoHundred = 'aei', trainingZoneFourHundred = 'aei';
+    let min = 0;
+    let max = 0;
 
     if (timeTwoHundred >= 176) {
+      max = 176;
       trainingZoneTwoHundred = 'aei';
     }
     
     if (timeTwoHundred >= 182.4) {
+      min = 176;
+      max = 182.4;
       trainingZoneTwoHundred = 'ael';
     }
 
     if (timeFourHundred >= 352.9) {
+      min = 182.4;
+      max = 352.9;
       trainingZoneTwoHundred = 'aem';
     }
 
     if (timeFourHundred >= 365.9) {
+      min = 352.9;
+      max = 365.9;
       trainingZoneTwoHundred = 'ael';
     }
 
-    return { trainingZoneTwoHundred, trainingZoneFourHundred };
+    console.log('___________', { trainingZoneTwoHundred, trainingZoneFourHundred, min, max });
+    return { trainingZoneTwoHundred, trainingZoneFourHundred, min, max };
+  },
+  getProgress: (req, res) => {
+    const { userId } = req.user;
+    let { limit, offset } = req.params;
+    limit = Number(limit);
+    offset = Number(offset);
+    console.log('BUsco runnint test con este id:', userId);
+    swimmingTestModel
+      .find({ athlete: userId })
+      .sort({ date: -1 })
+      .limit(5)
+      .exec((err, tests) => {
+        if (err) {
+          res.status(500).json({ message: "Something went wrong." });
+        } else {
+          console.log("testsss::", tests);
+          const output = [];
+          for (let i = 0; i < tests.length; i += 1) {
+            let data = {};
+            console.log('--->', );
+            let trainingZone = module.exports.calculateTrainingZone(tests[i].timeTwoHundred, tests[i].timeFourHundred);
+            data.trainingZone = trainingZone.trainingZone;
+            data.min = trainingZone.min;
+            data.max = trainingZone.max;
+            output.push(data);
+          }
+          console.log('Resultado!! ', output);
+          res.status(200).json(output);
+        }
+      });
   }
 }
