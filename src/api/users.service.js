@@ -44,19 +44,19 @@ module.exports = {
             //  trainer login
             if (user.role === 'trainer' && athlete) {
               userModel
-              .findOne({ email: athlete })
+              .findOne({ email: athlete, role: "athlete" })
               .exec((err, athlete) => {
-                if (err) {
+                if (err || !athlete) {
                   res.status(400).json({ message: 'Could not retrieve athlete information' });
                 } else {
                   const token = jwt.sign({ email: user.email, gender: athlete.gender, role: user.role, userId: athlete.id, bodyWeight: athlete.bodyWeight, height: athlete.height, swimmingCategory: athlete.swimmingCategory}, process.env.SECRET);
-                  res.status(200).json({ token });
+                  res.status(200).json({ token, role: user.role});
                 }
               });
             } else {
               //common login
               const token = jwt.sign({ email: user.email, gender: user.gender, role: user.role, userId: user.id, bodyWeight: user.bodyWeight, height: user.height, swimmingCategory: user.swimmingCategory}, process.env.SECRET);
-              res.status(200).json({ token });
+              res.status(200).json({ token, role: user.role });
 
             }
           } else {
