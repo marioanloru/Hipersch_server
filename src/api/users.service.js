@@ -76,7 +76,7 @@ module.exports = {
           res.status(200).json({ message: 'User already created' });
         } else {
           if ((role === 'admin') && (req.user.role !== 'admin')) {
-            res.status(401).json('You do not have permissions for this action. This action will be reported');
+            res.status(401).json('You do not have permissions for this action. This action will be reported.');
           } else {
             if (role === 'athlete' || role === 'trainer') {
               if (validateFields(email, password, lastName, firstName, gender, bodyWeight, height, swimmingCategory)) {
