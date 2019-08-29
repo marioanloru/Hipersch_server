@@ -152,7 +152,7 @@ module.exports = {
             for (let i = 0; i < result.length; i += 1) {
               emails.push(result[i].email);
             }
-            res.status(200).json({ emails });
+            res.status(200).json(emails);
           }
         });
     } else res.status(401).json({ message: 'This token has no permission for this action. This will be reported.'})
