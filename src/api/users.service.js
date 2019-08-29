@@ -194,10 +194,10 @@ module.exports = {
                 break;
               case 'swimming':
                 trainingZone = swimmingUtils.calculateTrainingZone(data[keys[i]].timeTwoHundred, data[keys[i]].timeFourHundred);
-                result[keys[i]].valueTwoHundred = timeTwoHundred;
-                result[keys[i]].valueFourHundred =  timeFourHundred;
-                result[keys[i]].trainingZoneTwoHundred = trainingZoneTwoHundred;
-                result[keys[i]].trainingZoneFourHundred = trainingZoneFourHundred;
+                result[keys[i]].valueTwoHundred = data[keys[i]].timeTwoHundred;
+                result[keys[i]].valueFourHundred =   data[keys[i]].timeFourHundred;
+                result[keys[i]].trainingZoneTwoHundred = trainingZone.trainingZoneTwoHundred;
+                result[keys[i]].trainingZoneFourHundred = trainingZone.trainingZoneFourHundred;
                 break;
               case 'cycling':
                 trainingZone = cyclingUtils.calculateTrainingZone(data[keys[i]].peakPower);
