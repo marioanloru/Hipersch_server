@@ -32,9 +32,6 @@ router
   .post('/user/login', userService.authenticate);
 
 router
-  .get('/user/progress', userService.getProgress);
-
-router
   .post('/user/register', userService.create);
 
 router

@@ -11,7 +11,7 @@ const cyclingUtils = require('../api/utils/cyclingUtils');
 const bcrypt = require('bcryptjs');
 
 function validateFields(email, password, lastName, firstName, gender, bodyWeight, height, swimmingCategory) {
-  let validation = true;
+  let validation = false;
   const swimmingCategories = [
     'afld',  //  Adult Female Long Distance
     'afs',    //  Adult Female Sprinter
@@ -25,10 +25,13 @@ function validateFields(email, password, lastName, firstName, gender, bodyWeight
     'im',    // Infantile Male
     'bf',     //  Beginner Female
     'bm'     //  Beginner Male
-  ]
+  ];
 
+  
   //  TODO: validate all fields
-  if (swimmingCategories.indexOf(swimmingCategory) === -1) validation = false;
+  if (swimmingCategories.indexOf(swimmingCategory) !== -1) {
+    validation = true;
+  }
   return validation; 
 }
 module.exports = {
@@ -66,8 +69,40 @@ module.exports = {
       });
     },
   create(req, res) {
-    const { email, password, lastName, firstName, gender, bodyWeight, height, swimmingCategory } = req.body;
+    let { email, password, lastName, firstName, gender, bodyWeight, height, swimmingCategory } = req.body;
     const role = req.body.role || 'athlete'; // Default role value
+    const swimmingCategoriesFull = [
+      'adult female long distance',
+      'adult female sprinter',
+      'adult male long distance',
+      'adult male sprinter',
+      'junior female long distance',
+      'junior female sprinter',
+      'junior male long distance',
+      'junior male sprinter',
+      'infantile female',
+      'infantile male',
+      'beginner female',
+      'beginner male'
+    ];
+    const swimmingCategories = [
+      'afld',  //  Adult Female Long Distance
+      'afs',    //  Adult Female Sprinter
+      'amld',   //  Adult Male Long Distance
+      'ams',    //  Adult Male Sprinter
+      'jfld',   //  Junior Female Long Distance
+      'jfs',    //  Junior Female Sprinter
+      'jmld',   //  Junior Male Long Distance
+      'jms',    //  Junior Male Sprinter
+      'if',   //  Infantile Female
+      'im',    // Infantile Male
+      'bf',     //  Beginner Female
+      'bm'     //  Beginner Male
+    ];
+    let foundIndex = swimmingCategoriesFull.indexOf(swimmingCategory.toLowerCase());
+    if (foundIndex !== -1) {
+      swimmingCategory = swimmingCategories[foundIndex]; 
+    }
     userModel
       .findOne({ email })
       .exec((err, user) => {
@@ -81,7 +116,7 @@ module.exports = {
             if (role === 'athlete' || role === 'trainer') {
               if (validateFields(email, password, lastName, firstName, gender, bodyWeight, height, swimmingCategory)) {
                 const hashedPassword = bcrypt.hashSync(password, 10);
-                const user = new userModel({ email, password: hashedPassword, lastName, firstName, bodyWeight, height, gender, role: 'athlete'});
+                const user = new userModel({ email, password: hashedPassword, lastName, firstName, bodyWeight, height, gender, role: 'athlete', swimmingCategory});
                   user
                   .save((err, result) => {
                       if (err) { 
@@ -211,81 +246,6 @@ module.exports = {
     
           res.status(200).json({ data: result });
         });
-      });
-  },
-  getProgressTests(userId, callback) {
-    const result = {};
-
-    runningTestModel
-      .find({ athlete: userId })
-      .sort({ date: -1 })
-      .limit(3)
-      .exec((err, runningData) => {
-        console.log('Running --> ', err, runningData);
-        if (err) {
-          callback(err);
-        } else {
-          result.running = runningData;
-          swimmingTestModel
-            .find({ athlete: userId })
-            .sort({ date: -1 })
-            .limit(3)
-            .exec((err, swimmingData) => {
-              console.log('Running --> ', err, swimmingData);
-              if (err) {
-                callback(err);
-              } else {
-                result.swimming = swimmingData;
-                cyclingTestModel
-                  .find({ athlete: userId, type: 'p6sec' })
-                  .sort({ date: -1 })
-                  .limit(3)
-                  .exec((err, cyclingData) => {
-                    console.log('Running --> ', err, cyclingData);
-                    if (err) {
-                      callback(err);
-                    } else {
-                      result.cycling = cyclingData;
-                      cyclingTestModel
-                        .find({ athlete: userId, type: 'p1min' })
-                        .sort({ date: -1 })
-                        .limit(3)
-                        .exec((err, cyclingDataOne) => {
-                          if (err) {
-                            callback(err);
-                          } else {
-                            result.cyclingOne = cyclingDataOne;
-                            cyclingTestModel
-                              .find({ athlete: userId, type: 'p6min' })
-                              .sort({ date: -1 })
-                              .limit(3)
-                              .exec((err, cyclingDataSix) => {
-                                if (err) {
-                                  callback(err);
-                                } else {
-                                  result.cyclingSix = cyclingDataSix;
-                                  cyclingTestModel
-                                    .find({ athlete: userId, type: 'p20sec' })
-                                    .sort({ date: -1 })
-                                    .limit(3)
-                                    .exec((err, cyclingDataTwenty) => {
-                                      if (err) {
-                                        callback(err);
-                                      } else {
-                                        result.cyclingTwenty = cyclingDataTwenty;
-                                        callback(null, result)
-                                      }
-                                    });
-                                }
-                              });
-                          }
-                        });
-                    }
-                  });
-              }
-            });
-
-        }
       });
   }
 };
