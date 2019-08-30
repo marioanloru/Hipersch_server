@@ -219,34 +219,34 @@ module.exports = {
   calculateTrainingZone: (timeTwoHundred, timeFourHundred) => {
     console.log(timeTwoHundred, timeFourHundred);
     let trainingZoneTwoHundred = 'aei', trainingZoneFourHundred = 'aei';
-    let min = 0;
-    let max = 0;
-
-    if (timeTwoHundred >= 176) {
-      max = 176;
-      trainingZoneTwoHundred = 'aei';
-    }
+    let minTwoHundred = 0, minFourHundred = 0;
+    let maxTwoHundred = 167.5, maxFourHundred = 335.9;
     
-    if (timeTwoHundred >= 182.4) {
-      min = 176;
-      max = 182.4;
-      trainingZoneTwoHundred = 'ael';
-    }
-
-    if (timeFourHundred >= 352.9) {
-      min = 182.4;
-      max = 352.9;
+    if (timeTwoHundred > 176) {
+      minTwoHundred = 176;
+      maxTwoHundred = 182.4;
       trainingZoneTwoHundred = 'aem';
     }
 
-    if (timeFourHundred >= 365.9) {
-      min = 352.9;
-      max = 365.9;
+    if (timeTwoHundred > 182.4) {
+      minTwoHundred = 182.4;
+      maxTwoHundred = 500;
       trainingZoneTwoHundred = 'ael';
     }
 
-    console.log('___________', { trainingZoneTwoHundred, trainingZoneFourHundred, min, max });
-    return { trainingZoneTwoHundred, trainingZoneFourHundred, min, max };
+    if (timeFourHundred > 352.9) {
+      minFourHundred = 352.9;
+      maxFourHundred = 365.9;
+      trainingZoneFourHundred = 'aem';
+    }
+
+    if (timeFourHundred > 365.9) {
+      minFourHundred = 365.9;
+      maxFourHundred = 500;
+      trainingZoneFourHundred = 'ael';
+    }
+
+    return { trainingZoneTwoHundred, trainingZoneFourHundred, minTwoHundred, maxTwoHundred, minFourHundred, maxFourHundred };
   },
   getProgress: (req, res) => {
     const { userId } = req.user;
@@ -266,11 +266,14 @@ module.exports = {
           const output = [];
           for (let i = 0; i < tests.length; i += 1) {
             let data = {};
-            console.log('--->', );
             let trainingZone = module.exports.calculateTrainingZone(tests[i].timeTwoHundred, tests[i].timeFourHundred);
             data.trainingZone = trainingZone.trainingZone;
-            data.min = trainingZone.min;
-            data.max = trainingZone.max;
+            data.minTwoHundred = trainingZone.minTwoHundred;
+            data.maxTwoHundred = trainingZone.maxTwoHundred;
+            data.minFourHundred = trainingZone.minFourHundred;
+            data.maxFourHundred = trainingZone.maxFourHundred;
+            data.trainingZoneTwoHundred = trainingZone.trainingZoneTwoHundred;
+            data.trainingZoneFourHundred = trainingZone.trainingZoneFourHundred;
             output.push(data);
           }
           console.log('Resultado!! ', output);
