@@ -1,6 +1,7 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
+//  Uer mongo model
 const User = new Schema({
   email: { type: String, unique: true, required: true },
   password: { type: String, required: true },
@@ -14,6 +15,5 @@ const User = new Schema({
   role: { type: String }
 });
 
-//User.set('toJSON', { virtuals: true });
 
 module.exports = mongoose.model('User', User);

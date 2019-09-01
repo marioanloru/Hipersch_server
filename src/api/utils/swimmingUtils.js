@@ -6,6 +6,7 @@ const uuid4 = require('uuid4');
 const _ = require('lodash');
 const async = require('async');
 
+//  Function to process a swimming test
 function processTest(velocityLT, velocityANAT, gender, height, mainCallback) {
   const distance = 200;
 
@@ -92,6 +93,7 @@ function processTest(velocityLT, velocityANAT, gender, height, mainCallback) {
     });
 }
 
+//  Function to calculate thresholds based on swimming category
 //  Time comes in seconds
 function calculateThresholds(timeFourHundred, timeTwoHundred, swimmingCategory) {
   const result = { anat: 0, lt: 0 };
@@ -130,6 +132,7 @@ function calculateThresholds(timeFourHundred, timeTwoHundred, swimmingCategory) 
 
 
 module.exports = {
+  //  Function to get current user tests
   getUserTests: (req, res) => {
     const { userId } = req.user;
     let { limit, offset } = req.params;
@@ -148,6 +151,7 @@ module.exports = {
         }
       });
   },
+  //  Function to insert a swimming test
   insertTest: (req, res) => {
     //  Time must be in seconds
     const { timeFourHundred, timeTwoHundred } = req.body;
@@ -174,8 +178,6 @@ module.exports = {
           timeFourHundred,
           testId: uuid4()
         });
-
-        console.log('Test que inserto')
     
         testToInsert
           .save((err, saveData) => {
@@ -191,6 +193,7 @@ module.exports = {
       }
     });
   },
+  //  Function to delete a test by testId
   deleteTest: (req, res) => {
     const { testId } = req.params;
     swimmingTestModel
@@ -202,6 +205,7 @@ module.exports = {
         }
       });
   },
+  //  Function to retrieve training zones
   getTrainingZone: (req, res) => {
     swimmingTestModel
       .findOne({})
@@ -216,6 +220,7 @@ module.exports = {
         }
       });
   },
+  //  Function to calculate training zones
   calculateTrainingZone: (timeTwoHundred, timeFourHundred) => {
     console.log(timeTwoHundred, timeFourHundred);
     let trainingZoneTwoHundred = 'aei', trainingZoneFourHundred = 'aei';
@@ -248,12 +253,12 @@ module.exports = {
 
     return { trainingZoneTwoHundred, trainingZoneFourHundred, minTwoHundred, maxTwoHundred, minFourHundred, maxFourHundred };
   },
+  //  Function to get five last tests training zone sorted by date
   getProgress: (req, res) => {
     const { userId } = req.user;
     let { limit, offset } = req.params;
     limit = Number(limit);
     offset = Number(offset);
-    console.log('BUsco runnint test con este id:', userId);
     swimmingTestModel
       .find({ athlete: userId })
       .sort({ date: -1 })
@@ -262,7 +267,6 @@ module.exports = {
         if (err) {
           res.status(500).json({ message: "Something went wrong." });
         } else {
-          console.log("testsss::", tests);
           const output = [];
           for (let i = 0; i < tests.length; i += 1) {
             let data = {};
@@ -276,7 +280,6 @@ module.exports = {
             data.trainingZoneFourHundred = trainingZone.trainingZoneFourHundred;
             output.push(data);
           }
-          console.log('Resultado!! ', output);
           res.status(200).json(output);
         }
       });

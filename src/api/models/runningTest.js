@@ -3,6 +3,7 @@ const User = require('./user');
 const Clasification = require('./clasifications');
 const Schema = mongoose.Schema;
 
+//  Running test mongo model
 const runningTest = new Schema({
   athlete: { 
     type: Schema.Types.ObjectId, 

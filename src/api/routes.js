@@ -9,15 +9,9 @@ const router = express.Router();
 router
   .get('/status', (req, res) => {
     console.log(req.user);
-    res.status(200).json({ message: 'Everything up and working'});
+    res.status(200).json({ message: 'Everything up and working' });
   });
 
-  
-router
-  .get('/running/testByDate/:inicio/:fin', runningUtils.getUserTestsByDate);
-
-router
-  .get('/running/test/:limit/:offset', runningUtils.getUserTests);
 
 router
   .get('/user/data', userService.getUserData);
@@ -36,6 +30,13 @@ router
 
 router
   .post('/user/delete', userService.delete);
+
+
+router
+  .get('/running/testByDate/:inicio/:fin', runningUtils.getUserTestsByDate);
+
+router
+  .get('/running/test/:limit/:offset', runningUtils.getUserTests);
 
 router
   .get('/running/trainingZone', runningUtils.getTrainingZone);
@@ -84,6 +85,7 @@ router
 
 router
   .get('/cycling/trainingZone', cyclingUtils.getTrainingZone);
+  
 router
   .get('/swimming/test/:limit/:offset', swimmingUtils.getUserTests);
 

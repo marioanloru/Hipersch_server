@@ -2,6 +2,7 @@ const clasificationsModel = require('../models/clasifications');
 const _ = require('lodash');
 
 module.exports = {
+  //  Function to initialize db
   initialize: (docs, callback) => {
     clasificationsModel
         .insertMany(docs, (err, res) => {
@@ -13,6 +14,7 @@ module.exports = {
           }
         });
   },
+  //  Function to clear db
   clearAll: (callback) => {
     clasificationsModel
       .deleteMany({})
@@ -24,6 +26,7 @@ module.exports = {
         }
       });
   },
+  //  Function to clear db
   clearDbvVo2MAX: (callback) => {
     clasificationsModel
       .deleteMany({ aspect: 'vvo2max' })
@@ -35,6 +38,7 @@ module.exports = {
         }
       });
   },
+  //  Function to clear db
   clearDbvUAN: (callback) => {
     clasificationsModel
       .deleteMany({ aspect: 'vuan' })
@@ -46,6 +50,7 @@ module.exports = {
         }
       });
   },
+  //  Function to clear db
   clearDbvUAE: (callback) => {
     clasificationsModel
       .deleteMany({ aspect: 'vuae' })
@@ -57,6 +62,7 @@ module.exports = {
         }
       });
   },
+  //  Get clasification values based on aspect
   getClasificationsBounds: (aspect, profile, gender, callback) => {
     clasificationsModel
       .find({ aspect, profile, gender })

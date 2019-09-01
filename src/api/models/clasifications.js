@@ -1,6 +1,7 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
+//  Clasifications mongo model
 const clasifications = new Schema({
   aspect: { 
     type: String, 

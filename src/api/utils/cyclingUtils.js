@@ -6,16 +6,15 @@ const uuid4 = require('uuid4');
 const _ = require('lodash');
 const async = require('async');
 
+//  Function to process cycling test
 function processTest(pam, puan, puae, gender, mainCallback) {
-  //PARAMETROS PARA EL RANGO PERCENTIL
   const results = {
     map: 0,
     vo2max: 0,
     anaThreshold: 0,
     at: 0 
   };
-  /** */
-  // OBTENCION DE VALORES
+  // Values
   async
     .parallel([
       (callback) => {
@@ -65,7 +64,7 @@ function processTest(pam, puan, puae, gender, mainCallback) {
       let puanValues = _.find(res, { aspect: 'puan' });
       let uanValues = _.find(res, { aspect: 'uan' });
 
-      //  CALCULO DE PERCENTIL
+      //  Percentile processing
       async.waterfall([
         (callback) => {
           results.map = mathUtils.percentilRank(pvo2maxValues.samples, pam) * 10;
@@ -89,12 +88,12 @@ function processTest(pam, puan, puae, gender, mainCallback) {
     });
 }
 
+//  Function to process test based on peak power
 function processPeakTest(peakPower, gender, bodyWeight, aspect, mainCallback) {
-  //PARAMETROS PARA EL RANGO PERCENTIL
   const results = {
     [aspect]: 0
   };
-  // OBTENCION DE VALORES
+  // Values
   async
     .parallel([
       (callback) => {
@@ -111,7 +110,7 @@ function processPeakTest(peakPower, gender, bodyWeight, aspect, mainCallback) {
       let samples = _.sortBy(res, 'max');
       let aspectSamples = _.find(res, { aspect });
 
-      //  CALCULO DE PERCENTIL
+      //  Percentile
       async.waterfall([
         (callback) => {
           results[aspect] = Math.round(mathUtils.percentilRank(aspectSamples.samples, peakPower/bodyWeight) * 10 * 100) / 100;
@@ -124,6 +123,7 @@ function processPeakTest(peakPower, gender, bodyWeight, aspect, mainCallback) {
 }
 
 module.exports = {
+  //  Function to get cycling user tests
   getUserTests: (req, res) => {
     const { userId } = req.user;
     let { limit, offset } = req.params;
@@ -180,6 +180,7 @@ module.exports = {
         }
       });
   },
+  //  Retrieves user 6 seconds test
   getUserTestsSixSec: (req, res) => {
     const { userId } = req.user;
     cyclingTestModel
@@ -194,6 +195,7 @@ module.exports = {
         }
       });
   },
+  //  Retrieves user 1 minute test
   getUserTestsOneMin: (req, res) => {
     const { userId } = req.user;
     cyclingTestModel
@@ -208,6 +210,7 @@ module.exports = {
         }
       });
   },
+  //  Retrieves user 20 six test
   getUserTestsSixMin: (req, res) => {
     const { userId } = req.user;
     cyclingTestModel
@@ -222,6 +225,7 @@ module.exports = {
         }
       });
   },
+  //  Retrieves user 20 minutes test
   getUserTestsTwentyMin: (req, res) => {
     const { userId } = req.user;
     cyclingTestModel
@@ -236,8 +240,7 @@ module.exports = {
         }
       });
   },
-
-  //6s
+  //  Function to insert 6 seconds test
   insertTestSixSec: (req, res) => {
     const { peakPower } = req.body;
     const { userId, gender, bodyWeight} = req.user;
@@ -265,7 +268,7 @@ module.exports = {
       }
     });
   },
-  //1min
+  //  Function to insert 1min test
   insertTestOneMin: (req, res) => {
     const { peakPower } = req.body;
     const { userId, gender, bodyWeight} = req.user;
@@ -294,7 +297,7 @@ module.exports = {
       }
     });
   },
-  //6min
+  //  Function to insert 6min test
   insertTestSixMin: (req, res) => {
     const { peakPower } = req.body;
     const { userId, gender, bodyWeight } = req.user;
@@ -324,7 +327,7 @@ module.exports = {
       }
     });
   },
-  //  60min
+  //  Function to insert 60min test
   insertTestSixtyMin: (req, res) => {
     const { peakPower } = req.body;
     const { userId, gender, bodyWeight } = req.user;
@@ -355,6 +358,7 @@ module.exports = {
       }
     });
   },
+  //  Function to get training zone by type
   getTrainingZone: (req, res) => {
     cyclingTestModel
       .findOne({ type: 'p20min'})
@@ -376,6 +380,7 @@ module.exports = {
         }
       });
   },
+  //  Function to calculate training zone based on peak power
   calculateTrainingZone: (peakPower) => {
     let trainingZone = '0';
     let trainingZoneTag = '';
@@ -448,6 +453,7 @@ module.exports = {
       };
     }
   },
+  //  Function to delete cycling test by id
   deleteTest: (req, res) => {
     const { testId } = req.params;
     cyclingTestModel
@@ -459,6 +465,7 @@ module.exports = {
         }
       });
   },
+  //  Function to get last 5 training zones ordered by date
   getProgress: (req, res) => {
     const { userId } = req.user;
     let { limit, offset } = req.params;

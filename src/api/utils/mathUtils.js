@@ -1,4 +1,5 @@
 module.exports = {
+  //  Function to calculate percentile
   percentilRank: (samples, value) => {
     let valueInSample = false;
     let valuePassed = false;
@@ -51,6 +52,7 @@ module.exports = {
     }
     return Math.round(res * 100)/100;
   },
+  //  Function to calculate linear interpolation between values
   linearInterpolation: (x0, x, x1, y0, y1) => {
     return Math.round(y0 + (y1 - y0) * ((x - x0) / (x1 - x0))* 100)/100;
   }

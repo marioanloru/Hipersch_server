@@ -10,6 +10,7 @@ const cyclingUtils = require('../api/utils/cyclingUtils');
 
 const bcrypt = require('bcryptjs');
 
+//  Field validation
 function validateFields(email, password, lastName, firstName, gender, bodyWeight, height, swimmingCategory) {
   let validation = false;
   const swimmingCategories = [
@@ -27,14 +28,13 @@ function validateFields(email, password, lastName, firstName, gender, bodyWeight
     'bm'     //  Beginner Male
   ];
 
-  
-  //  TODO: validate all fields
   if (swimmingCategories.indexOf(swimmingCategory) !== -1) {
     validation = true;
   }
   return validation; 
 }
 module.exports = {
+  //  Login
   authenticate(req, res) {
     const { email, password, athlete } = req.body;
     userModel
@@ -43,6 +43,7 @@ module.exports = {
         if (err) {
           res.status(500).json(err);
         } else {
+          console.log(user, password);
           if (user && bcrypt.compareSync(password, user.password)) {
             //  trainer login
             if (user.role === 'trainer' && athlete) {
@@ -68,6 +69,7 @@ module.exports = {
         }
       });
     },
+  //  Creates a new user
   create(req, res) {
     let { email, password, lastName, firstName, gender, bodyWeight, height, swimmingCategory } = req.body;
     const role = req.body.role || 'athlete'; // Default role value
@@ -134,6 +136,7 @@ module.exports = {
         }
       });
   },
+  //  Delete user by email
   delete(req, res) {
     const { email } = req.body;
     if (req.user.role === 'admin') {
@@ -151,6 +154,7 @@ module.exports = {
       res.status(401).json({ message: 'You do not have permissions for this action. This action will be reported'});
     }
   },
+  //  Retrieves user personal data
   getUserData(req, res) {
     const { height, bodyWeight } = req.user;
     const heightMeter = height / 100;
@@ -160,9 +164,9 @@ module.exports = {
     console.elog
     res.status(200).json({ height, bodyWeight, bmi });
   },
+  //  Updates personal user data
   updateUserData(req, res) {
     const { height, bodyWeight } = req.body;
-    console.log('Parametros -> ', height, bodyWeight);
     userModel
       .updateOne({ email: req.user.email }, { $set: { height, bodyWeight }}, { omitUndefined: true })
       .exec((err, result) => {
@@ -174,9 +178,8 @@ module.exports = {
         }
       });
   },
+  //  Retrieves athletes for trainers
   getAthletes(req, res) {
-    console.log("rol del usuario en get athletes!!");
-    console.log(req.user.role);
     if (req.user.role === 'trainer') {
       userModel
         .find({ role: 'athlete'})
@@ -189,17 +192,15 @@ module.exports = {
             for (let i = 0; i < result.length; i += 1) {
               emails.push({ email: result[i].email});
             }
-            console.log("Respondo con: ", {emails});
             res.status(200).json(emails);
           }
         });
     } else {
-      console.log("Usuario sin permisos!");
       res.status(401).json({ message: 'This token has no permission for this action. This will be reported.'})
     }
   },
+  //  Calculates progress
   getProgress(req, res) {
-    console.log('En get progress!!!', req.user);
     userModel
       .findOne({ email: req.email })
       .exec((err, userId) => {
@@ -207,14 +208,9 @@ module.exports = {
           res.status(400).json({ message: "Something failed" });
         }
         module.exports.getProgressTests(userId, (err, data) => {
-          console.log('Lo que se ha recuperado de getProgressTests!!', data);
     
           const keys = Object.keys(data);
-    
-          console.log('Las keys que se tienen:: ', keys);
-          const result = {
-    
-          };
+          const result = {};
           let trainingZone;
           for (let i = 0; i < keys.length; i += 1) {
             if (!(keys[i] in result)) {

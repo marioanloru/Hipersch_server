@@ -6,6 +6,7 @@ const uuid4 = require('uuid4');
 const _ = require('lodash');
 const async = require('async');
 
+//  Function to process six minutes tests based on distance
 function processSixMinutesTest(distance, gender, vo2maxIndirect, mainCallback) {
   const speedMS = distance/360;
   const speedKMH = speedMS * 3.6; 
@@ -75,6 +76,7 @@ function processSixMinutesTest(distance, gender, vo2maxIndirect, mainCallback) {
 }
 
 module.exports = {
+  //  Function to insert six minutes tests based on distance
   insertTestSixMinutes: (req, res) => {
     const { distance } = req.body;
     const { userId, gender } = req.user;
@@ -105,6 +107,7 @@ module.exports = {
       }
     });
   },
+  //  Function to retrieve running tests
   getUserTests: (req, res) => {
     const { userId } = req.user;
     let { limit, offset } = req.params;
@@ -124,8 +127,8 @@ module.exports = {
         }
       });
   },
+  //  Function to retrieve running tests by date
   getUserTestsByDate: (req, res) => {
-    //  Setear busqueda por intervalo de fecha (entre fechas)
     const { userId } = req.user;
     const { max, min } = req.params;
     runningTestModel
@@ -138,8 +141,8 @@ module.exports = {
         }
       });
   },
+  //  Function to delete a test by testId
   deleteTest: (req, res) => {
-    console.log("Borrando test!");
     const { testId } = req.params;
     runningTestModel
       .deleteOne({ testId }, (err, test) => {
@@ -151,6 +154,7 @@ module.exports = {
         }
       });
   },
+  //  Function to get current user training zone
   getTrainingZone: (req, res) => {
     runningTestModel
       .findOne({})
@@ -166,6 +170,7 @@ module.exports = {
         }
       });
   },
+  //  Function to calculate training zone 
   calculateTrainingZone: (speed) => {
     const testSpeed = speed;
     let trainingZone = 0;
@@ -219,12 +224,9 @@ module.exports = {
     }
     return { trainingZone, min, max };
   },
+  //  Function to retrieve last five training zones sorted by date
   getProgress: (req, res) => {
     const { userId } = req.user;
-    let { limit, offset } = req.params;
-    limit = Number(limit);
-    offset = Number(offset);
-    console.log('BUsco runnint test con este id:', userId);
     runningTestModel
       .find({ athlete: userId })
       .sort({ date: -1 })
@@ -233,18 +235,15 @@ module.exports = {
         if (err) {
           res.status(500).json({ message: "Something went wrong." });
         } else {
-          console.log("testsss::", tests);
           const output = [];
           for (let i = 0; i < tests.length; i += 1) {
             let data = {};
-            console.log('--->', );
             let trainingZone = module.exports.calculateTrainingZone(tests[i].speed);
             data.trainingZone = trainingZone.trainingZone;
             data.min = trainingZone.min;
             data.max = trainingZone.max;
             output.push(data);
           }
-          console.log('Resultado!! ', output);
           res.status(200).json(output);
         }
       });
