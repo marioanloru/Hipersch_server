@@ -1,10 +1,12 @@
 {
-  "name": "server",
+  "name": "hipersch-server",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "test"
+    "test": "mocha ./tests/test.js",
+    "develop": "nodemon ./src/index.js",
+    "start": "forever ./src/index.js"
   },
   "repository": {
     "type": "git",
@@ -17,13 +19,22 @@
   },
   "homepage": "https://github.com/marioanloru/TFG_backend#readme",
   "dependencies": {
+    "bcryptjs": "^2.4.3",
     "body-parser": "^1.18.3",
     "cors": "^2.8.5",
     "dotenv": "^7.0.0",
     "express": "^4.16.4",
     "express-jwt": "^5.3.1",
+    "forever": "^1.0.0",
     "jsonwebtoken": "^8.5.1",
+    "lodash": "^4.17.11",
+    "mocha": "^6.1.4",
+    "mongodb-memory-server": "^5.2.0",
+    "mongoose": "^5.4.22",
     "nodemon": "^1.18.10",
-    "rootpath": "^0.1.2"
+    "request": "^2.88.0",
+    "rootpath": "^0.1.2",
+    "supertest": "^4.0.2",
+    "uuid4": "^1.1.4"
   }
 }
