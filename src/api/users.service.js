@@ -43,7 +43,6 @@ module.exports = {
         if (err) {
           res.status(500).json(err);
         } else {
-          console.log(user, password);
           if (user && bcrypt.compareSync(password, user.password)) {
             //  trainer login
             if (user.role === 'trainer' && athlete) {
@@ -159,7 +158,6 @@ module.exports = {
     const { height, bodyWeight } = req.user;
     const heightMeter = height / 100;
     let bmi = bodyWeight / (heightMeter*heightMeter);
-    console.log(req.user);
     bmi = Math.round(bmi * 10) / 10;
     console.elog
     res.status(200).json({ height, bodyWeight, bmi });
@@ -170,8 +168,8 @@ module.exports = {
     userModel
       .updateOne({ email: req.user.email }, { $set: { height, bodyWeight }}, { omitUndefined: true })
       .exec((err, result) => {
-        console.log(err, result);
         if (err) {
+          console.log(err);
           res.status(400).json({ message: 'User data could not be modified'});
         } else {
           res.status(200).json({ message: 'User data modified. Please, login in again with new token data'});
