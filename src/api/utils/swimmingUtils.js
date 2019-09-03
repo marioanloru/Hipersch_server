@@ -222,7 +222,6 @@ module.exports = {
   },
   //  Function to calculate training zones
   calculateTrainingZone: (timeTwoHundred, timeFourHundred) => {
-    console.log(timeTwoHundred, timeFourHundred);
     let trainingZoneTwoHundred = 'aei', trainingZoneFourHundred = 'aei';
     let minTwoHundred = 0, minFourHundred = 0;
     let maxTwoHundred = 167.5, maxFourHundred = 335.9;

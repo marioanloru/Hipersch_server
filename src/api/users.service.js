@@ -43,7 +43,6 @@ module.exports = {
         if (err) {
           res.status(500).json(err);
         } else {
-          console.log(user, password);
           if (user && bcrypt.compareSync(password, user.password)) {
             //  trainer login
             if (user.role === 'trainer' && athlete) {
@@ -101,40 +100,46 @@ module.exports = {
       'bf',     //  Beginner Female
       'bm'     //  Beginner Male
     ];
-    let foundIndex = swimmingCategoriesFull.indexOf(swimmingCategory.toLowerCase());
-    if (foundIndex !== -1) {
-      swimmingCategory = swimmingCategories[foundIndex]; 
-    }
-    userModel
-      .findOne({ email })
-      .exec((err, user) => {
-        //  Usuario ya existe
-        if (user) {
-          res.status(200).json({ message: 'User already created' });
-        } else {
-          if ((role === 'admin') && (req.user.role !== 'admin')) {
-            res.status(401).json('You do not have permissions for this action. This action will be reported.');
+    if (!swimmingCategory) {
+      res.status(400).json({ message: 'Swiming category is needed' })
+    } else {
+      let foundIndex = swimmingCategoriesFull.indexOf(swimmingCategory.toLowerCase());
+      if (foundIndex !== -1) {
+        swimmingCategory = swimmingCategories[foundIndex]; 
+      }
+      userModel
+        .findOne({ email })
+        .exec((err, user) => {
+          //  Usuario ya existe
+          if (user) {
+            res.status(200).json({ message: 'User already created' });
           } else {
-            if (role === 'athlete' || role === 'trainer') {
-              if (validateFields(email, password, lastName, firstName, gender, bodyWeight, height, swimmingCategory)) {
-                const hashedPassword = bcrypt.hashSync(password, 10);
-                const user = new userModel({ email, password: hashedPassword, lastName, firstName, bodyWeight, height, gender, role: 'athlete', swimmingCategory});
-                  user
-                  .save((err, result) => {
-                      if (err) { 
-                        console.log(err);
-                        res.status(400).json({ message: 'User could not be created' });
-                      } else {
-                        res.status(200).json({ message: 'User created' });
-                      }
-                  });
-              } else res.status(400).json({ message: 'User could not be created' });
+            if ((role === 'admin') && (req.user.role !== 'admin')) {
+              res.status(401).json('You do not have permissions for this action. This action will be reported.');
             } else {
-              res.status(401).json({ message: 'User role invalid' });
+              console.log('118');
+              if (role === 'athlete' || role === 'trainer') {
+                console.log('120');
+                if (validateFields(email, password, lastName, firstName, gender, bodyWeight, height, swimmingCategory)) {
+                  const hashedPassword = bcrypt.hashSync(password, 10);
+                  const user = new userModel({ email, password: hashedPassword, lastName, firstName, bodyWeight, height, gender, role: 'athlete', swimmingCategory});
+                    user
+                    .save((err, result) => {
+                        if (err) { 
+                          console.log(err);
+                          res.status(400).json({ message: 'User could not be created' });
+                        } else {
+                          res.status(200).json({ message: 'User created' });
+                        }
+                    });
+                } else res.status(400).json({ message: 'User could not be created' });
+              } else {
+                res.status(401).json({ message: 'User role invalid' });
+              }
             }
           }
-        }
-      });
+        });
+    }
   },
   //  Delete user by email
   delete(req, res) {
@@ -159,7 +164,6 @@ module.exports = {
     const { height, bodyWeight } = req.user;
     const heightMeter = height / 100;
     let bmi = bodyWeight / (heightMeter*heightMeter);
-    console.log(req.user);
     bmi = Math.round(bmi * 10) / 10;
     console.elog
     res.status(200).json({ height, bodyWeight, bmi });
@@ -170,8 +174,8 @@ module.exports = {
     userModel
       .updateOne({ email: req.user.email }, { $set: { height, bodyWeight }}, { omitUndefined: true })
       .exec((err, result) => {
-        console.log(err, result);
         if (err) {
+          console.log(err);
           res.status(400).json({ message: 'User data could not be modified'});
         } else {
           res.status(200).json({ message: 'User data modified. Please, login in again with new token data'});

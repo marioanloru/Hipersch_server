@@ -8,6 +8,7 @@ const memoryServer = require('mongodb-memory-server');
 const mongoose = require('mongoose');
 const assert = require('assert');
 const supertest = require('supertest');
+const async = require('async');
 //const app = require('../src/index');
 const uuidv4 = require('uuid4');
 
@@ -16,9 +17,10 @@ const mathUtils = require('../src/api/utils/mathUtils');
 const runningUtils = require('../src/api/utils/runningUtils');
 const bcrypt = require('bcryptjs');
 
+const initializeUtils = require('../scripts/utils');
 const UserModel = require('../src/api/models/user');
 const RunningTestModel = require('../src/api/models/runningTest');
-//  const app = require('../src/index');
+const app = require('../src/index');
 //  const userService = require('../src/api/users.service');
 mongoose.set('useNewUrlParser', true);
 mongoose.set('useFindAndModify', false);
@@ -47,6 +49,7 @@ after(() => {
   mongoServer.stop();
 });
 
+//  Tests unitarios
 describe('Math utils tests', () => {
   it('Check percentile rank', () => {
     let samples = [10.2, 11.7, 13.2, 14.6, 16, 17.5, 19, 20, 21.8, 22.2, 24];
@@ -59,52 +62,10 @@ describe('Math utils tests', () => {
   });
 });
 
-//  TESTING DE LAS RUTAS!! 
-/*describe('User tests', () => {
-  beforeEach(done => {
-    mongoose.connection.collections.users.drop(() => {
-      const hashedPassword = bcrypt.hashSync('password', 10);
-      const user = new UserModel({ 
-        email: "testemail@hotmail.com",
-        password: hashedPassword,
-        lastName: 'lastname',
-        firstName: 'firstname',
-        bodyWeight: 72,
-        height: 170,
-        gender: 'male',
-        role: 'athlete'
-      });
-      user.save((err, newUser) => {
-        done();
-      });
-    });
-  });
+const runningTestId1 = uuidv4();
+const runningTestId2 = uuidv4();
 
-  it('Test user login', done => {
-    const res = {};
-    // replace the following () => res
-    // with your function stub/mock of choice
-    // making sure they still return `res`
-    res.status = () => res;
-    res.json = () => res;
-    const req = {
-      body: {
-        email: "testemail@hotmail.com",
-        password: 'password'
-      }
-    };
-
-    /*const data = userService
-      .authenticate(req, res)
-      .then((err, res) => {
-        console.log(err, res);
-      });*/
-
-    /*console.log('lo que devuelve!!', data);
-    done();
-  });
-})*/
-
+//  Tests de integración
 before(done => {
   mongoose.connection.collections.users.drop(() => {
     const hashedPassword = bcrypt.hashSync('password', 10);
@@ -116,18 +77,91 @@ before(done => {
       bodyWeight: 72,
       height: 170,
       gender: 'male',
-      role: 'athlete'
+      role: 'athlete',
+      swimmingCategory: 'afld'
     });
     user.save((err, newUser) => {
-      done();
+      const runningTest = new RunningTestModel({
+        athlete: newUser._id,
+        distance: 1800,
+        speed: 5,
+        MAVvVo2max: 7.33,
+        vo2max: 7.33,
+        vat: 7.33,
+        testId: runningTestId1
+      });
+  
+      const runningTest2 = new RunningTestModel({
+        athlete: newUser._id,
+        distance: 200,
+        speed: 5,
+        MAVvVo2max: 6.33,
+        vo2max: 8.33,
+        vat: 7.33,
+        testId: runningTestId2
+      });
+
+      runningTest.save((testError, newTest) => {
+        runningTest2.save((testError2, newTest2) => {
+          async
+            .parallel([
+              (callback) => {
+                initializeUtils.initializeRunningTable((err, res) => {
+                  if (err) {
+                    callback(err);
+                  } else {
+                    callback(null, res);
+                  }
+                });
+              },
+              (callback) => {
+                initializeUtils.initializeCyclingTable((err, res) => {
+                  if (err) {
+                    callback(err);
+                  } else {
+                    callback(null, res);
+                  }
+                });
+              },
+              (callback) => {
+                initializeUtils.initializeCyclingPeakTable((err, res) => {
+                  if (err) {
+                    callback(err);
+                  } else {
+                    callback(null, res);
+                  }
+                });
+              },
+              (callback) => {
+                initializeUtils.initializeSwimmingTable((err, res) => {
+                  if (err) {
+                    callback(err);
+                  } else {
+                    callback(null, res);
+                  }
+                });
+              }
+            ], (err, res) => {
+              done();
+            });
+        })
+      });
     });
   });
 });
 
-/*describe('REST API tests', () => {
+describe('REST API tests', () => {
   let token = '';
-  before(done => {
-    
+  it('Check API status', () => {
+    supertest(app)
+      .get('/api/status')
+      .expect(200)
+      .then(response => {
+        assert.equal(response.body.message, 'Everything up and working');
+      });
+  });
+
+  it('User authentication', () => {
     const context = {
       email: 'testemail@hotmail.com',
       password: 'password'
@@ -135,208 +169,194 @@ before(done => {
     supertest(app)
       .post('/api/user/login')
       .send(context)
-      .expect('Content-type', /json/)
       .expect(200)
       .then(response => {
-        token = response.token;
-        console.log(' ----------- > Token obtenido!!! ', token);
-        done();
+        token = response.body.token;
       });
-
   });
 
-  describe('Running tests', () => {
-    const runningTest = new RunningTestModel({
-      athlete: newUser._id,
-      distance: 1800,
-      speed: 5,
-      MAVvVo2max: 7.33,
-      vo2max: 7.33,
-      vat: 7.33,
-      testId: uuidv4()
-    });
-
-    const runningTest2 = new RunningTestModel({
-      athlete: newUser._id,
-      distance: 200,
-      speed: 5,
-      MAVvVo2max: 6.33,
-      vo2max: 8.33,
-      vat: 7.33,
-      testId: uuidv4()
-    });
-
-    before(done => {
-      mongoose.connection.collections.runningTests.drop(() => {
-        const user = new UserModel({ 
-          email: "testemail@hotmail.com",
-          password: hashedPassword,
-          lastName: 'lastname',
-          firstName: 'firstname',
-          bodyWeight: 72,
-          height: 170,
-          gender: 'male',
-          role: 'athlete'
-        });
-        user.save((err, newUser) => {
-
-          runningTest.save((testError, newTest) => {
-            runningTest2.save((testError2, newTest2) => {
-              console.log('Running tests insertados!!!');
-              done();
-            })
-          });
-        });
-      });
-    });
-  
-    it('Check get user tests', (done) => {
-      console.log('El token que se envia -----------> ', token);
-      supertest(app)
-        .get('/api/running/test')
-        .set('Authorization', `Bearer ${token}`)
-        .expect('Content-type', /json/)
-        .expect(200)
-        .then(response => {
-          console.log('Respuesta ----> ', response);
-          assert.equal(response[0], runningTest);
-          assert.equal(response[1], runningTest2);
-          done();
-        });
-    });
-    it('Check get training zone ', (done) => {
-      console.log('El token que se envia -----------> ', token);
-      supertest(app)
-        .get('/api/running/trainingZone')
-        .set('Authorization', `Bearer ${token}`)
-        .expect('Content-type', /json/)
-        .expect(200)
-        .then(response => {
-          console.log('Respuesta ----> ', response);
-          //assert.equal(response[0], runningTest);
-          done();
-        });
-    });
-  });
-});*/
-
-
-
-
-//  User api tests [TO DO]
-/*describe('User tests', () => {
-  //  Get test admin token
-  /*before((done) => {
-    request('localhost:9000')
+  /*it('User authentication failure', () => {
+    const context = {
+      email: 'testemassssasdasdadsil@hotmail.com',
+      password: 'password'
+    };
+    supertest(app)
       .post('/api/user/login')
-      .send({ username: 'admin', password: 'admin' })
-      .end((err, res) => {
-        adminToken = res.body.token;
-        done(); 
+      .expect(500)
+      .then(response => {
+        assert.equal(response.body.message, 'Login credentials incorrect');
       });
-    });*/
-  
-  //  User creation
-  /*it('Check user register', (done) => {
+  });*/
+
+  it('User register', () => {
     const context = {
-      "username": "mujer",
-      "password": "finisterre",
-      "firstName": "unamujer",
-      "lastName": "muymujer",
-      "gender": "female",
-      "bodyWeight": "73",
-      "height": "154",
-      "role": "user"
+      email: 'testregister@hotmail.com',
+      password: 'password',
+      lastName: "test", 
+      firstName: "test",
+      gender: "male",
+      bodyWeight: "72",
+      height: "170",
+      swimmingCategory: "jms",
+      role: "athlete"
     };
     supertest(app)
       .post('/api/user/register')
       .send(context)
-      .expect('Content-type', /json/)
-      .expect(200, {
-        message: 'User created'
-      }, done);
+      .expect(200)
+      .then(response => {
+      });
   });
 
-  //  User already exists
-  it('Check user already exists', (done) => {
+  it('User register failure', () => {
     const context = {
-      "username": "mujer",
-      "password": "finisterre",
-      "firstName": "unamujer",
-      "lastName": "muymujer",
-      "gender": "female",
-      "bodyWeight": "52",
-      "height": "163",
-      "role": "user"
+      email: 'testregisttterrrr@hotmail.com',
+      password: 'password',
+      lastName: "test", 
+      firstName: "test",
+      gender: "male",
+      bodyWeight: "72",
+      height: "170",
+      role: "athlete"
     };
     supertest(app)
       .post('/api/user/register')
       .send(context)
-      .expect('Content-type', /json/)
-      .expect(200, {
-        message: 'User already created'
-      }, done);
+      .expect(400)
+      .then(response => {
+        assert.equal(response.body.message, 'Swiming category is needed');
+      });
   });
 
-  //  User admin creation error
-  it('Check user register', (done) => {
+  it('User register on existing user failure', () => {
     const context = {
-      "username": "testAdmin",
-      "password": "finisterre",
-      "firstName": "unamujer",
-      "lastName": "muymujer",
-      "gender": "female",
-      "bodyWeight": "73",
-      "height": "154",
-      "role": "admin"
+      email: 'testregister@hotmail.com',
+      password: 'password',
+      lastName: "test", 
+      firstName: "test",
+      gender: "male",
+      bodyWeight: "72",
+      height: "170",
+      swimmingCategory: "junior male sprinter",
+      role: "athlete"
     };
     supertest(app)
       .post('/api/user/register')
       .send(context)
-      .expect('Content-type', /json/)
-      .expect(200, {
-        message: 'User created'
-      }, done);
+      .expect(200)
+      .then(response => {
+        assert.equal(response.body.message, 'User already created');
+      });
   });
-  //  User delete
-  it('Check user delete', (done) => {
-    const context = {
-      "username": "mujer"
+
+  it('Get user data', () => {
+    const token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InRlc3RlbWFpbEBob3RtYWlsLmNvbSIsImdlbmRlciI6Im1hbGUiLCJyb2xlIjoiYXRobGV0ZSIsInVzZXJJZCI6IjVkNmQ2Mjc4ZDA3MTgwM2VjYjQ0NzQwOSIsImJvZHlXZWlnaHQiOjcyLCJoZWlnaHQiOjE3MCwic3dpbW1pbmdDYXRlZ29yeSI6ImFmbGQiLCJpYXQiOjE1Njc0NDk3MjB9.56-1ZDcZFw3RnrlM2K2dlYZQH_aw4cR1j8hEat8zbeI';
+    supertest(app)
+      .get('/api/user/data')
+      .set('Authorization', `Bearer ${token}`)
+      .expect(200)
+      .then(response => {
+        assert.equal(response.body.height, "170");
+        assert.equal(response.body.bodyWeight, "72");
+      });
+  });
+
+  it('Update user data', () => {
+    const token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InRlc3RlbWFpbEBob3RtYWlsLmNvbSIsImdlbmRlciI6Im1hbGUiLCJyb2xlIjoiYXRobGV0ZSIsInVzZXJJZCI6IjVkNmQ2Mjc4ZDA3MTgwM2VjYjQ0NzQwOSIsImJvZHlXZWlnaHQiOjcyLCJoZWlnaHQiOjE3MCwic3dpbW1pbmdDYXRlZ29yeSI6ImFmbGQiLCJpYXQiOjE1Njc0NDk3MjB9.56-1ZDcZFw3RnrlM2K2dlYZQH_aw4cR1j8hEat8zbeI';
+    let context = {
+      height: "160",
+      bodyWeight: "65"      
     };
     supertest(app)
-      .post('/api/user/delete')
-      .set('Authorization', 'Bearer' + adminToken)
-      .send(context)
-      .expect('Content-type', /json/)
-      .expect(200, {
-        message: 'User deleted'
-      }, done);
+      .post('/api/user/data')
+      .set('Authorization', `Bearer ${token}`)
+      .expect(200)
+      .then(response => {
+        assert.equal(response.body.message, "User data modified. Please, login in again with new token data");
+      });
   });
-  //  User delete failure on non existing user
-  it('Check user failure on non existing user', (done) => {
-    const context = {
-      "username": "thisuserdoesnotexist"
-    };
-    supertest(app)
-      .post('/api/user/delete')
-      .set('Authorization', 'Bearer' + adminToken)
-      .send(context)
-      .expect('Content-type', /json/)
-      .expect(400, {
-        message: 'Could not delete user'
-      }, done);
-  });
+
   //  User delete failure beacuse of permission lack
-  it('Check user failure beacuse of permission lack', (done) => {
+  it('Check user unauthorized failure', (done) => {
     const context = {
-      "username": "mujer"
+      "email": "unexistingemail@hotmail.com"
     };
     supertest(app)
       .post('/api/user/delete')
+      .set('Authorization', `Bearer ${token}`)
       .send(context)
-      .expect('Content-type', /json/)
-      .expect(400, {
+      .expect(401, {
         message: 'You do not have permissions for this action. This action will be reported'
       }, done);
   });
-});*/
+
+  it('Delete user test', () => {
+    const context = {
+      email: 'testemail@hotmail.com',
+      password: 'password'
+    };
+
+    RunningTestModel
+      .findOne({ testId: runningTestId1 })
+      .exec((err, data) => {
+        supertest(app)
+          .post(`/api/running/test/${runningTestId1}`)
+          .set('Authorization', `Bearer ${token}`)
+          .send(context)
+          .expect(200)
+          .then(response => {
+            assert.equal(response.body.message, 'Test deleted. ');
+          });
+      });
+  });
+
+  it('Delete running test failure', () => {
+    const token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InRlc3RlbWFpbEBob3RtYWlsLmNvbSIsImdlbmRlciI6Im1hbGUiLCJyb2xlIjoiYXRobGV0ZSIsInVzZXJJZCI6IjVkNmQ2Mjc4ZDA3MTgwM2VjYjQ0NzQwOSIsImJvZHlXZWlnaHQiOjcyLCJoZWlnaHQiOjE3MCwic3dpbW1pbmdDYXRlZ29yeSI6ImFmbGQiLCJpYXQiOjE1Njc0NDk3MjB9.56-1ZDcZFw3RnrlM2K2dlYZQH_aw4cR1j8hEat8zbeI';
+    RunningTestModel
+      .findOne({ testId: uuidv4() })
+      .exec((err, data) => {
+        supertest(app)
+          .post(`/api/running/test/${uuidv4()}`)
+          .set('Authorization', `Bearer ${token}`)
+          .expect(404);
+      });
+  });
+  
+  it('Insert Swimming test', () => {
+    const token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InRlc3RlbWFpbEBob3RtYWlsLmNvbSIsImdlbmRlciI6Im1hbGUiLCJyb2xlIjoiYXRobGV0ZSIsInVzZXJJZCI6IjVkNmQ2Mjc4ZDA3MTgwM2VjYjQ0NzQwOSIsImJvZHlXZWlnaHQiOjcyLCJoZWlnaHQiOjE3MCwic3dpbW1pbmdDYXRlZ29yeSI6ImFmbGQiLCJpYXQiOjE1Njc0NDk3MjB9.56-1ZDcZFw3RnrlM2K2dlYZQH_aw4cR1j8hEat8zbeI';    
+    const context = {
+      "timeFourHundred": "755",
+      "timeTwoHundred": "377"
+    };
+    supertest(app)
+      .post('/api/swimming/test')
+      .set('Authorization', `Bearer ${token}`)
+      .send(context)
+      .expect(200);
+  });
+
+  it('Insert Running test', () => {
+    const token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InRlc3RlbWFpbEBob3RtYWlsLmNvbSIsImdlbmRlciI6Im1hbGUiLCJyb2xlIjoiYXRobGV0ZSIsInVzZXJJZCI6IjVkNmQ2Mjc4ZDA3MTgwM2VjYjQ0NzQwOSIsImJvZHlXZWlnaHQiOjcyLCJoZWlnaHQiOjE3MCwic3dpbW1pbmdDYXRlZ29yeSI6ImFmbGQiLCJpYXQiOjE1Njc0NDk3MjB9.56-1ZDcZFw3RnrlM2K2dlYZQH_aw4cR1j8hEat8zbeI';    
+    const context = {
+      "distance": "1800"
+    };
+    supertest(app)
+      .post('/api/running/test')
+      .set('Authorization', `Bearer ${token}`)
+      .send(context)
+      .expect(200);
+  });
+
+  it('Insert Cycling test', () => {
+    const token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InRlc3RlbWFpbEBob3RtYWlsLmNvbSIsImdlbmRlciI6Im1hbGUiLCJyb2xlIjoiYXRobGV0ZSIsInVzZXJJZCI6IjVkNmQ2Mjc4ZDA3MTgwM2VjYjQ0NzQwOSIsImJvZHlXZWlnaHQiOjcyLCJoZWlnaHQiOjE3MCwic3dpbW1pbmdDYXRlZ29yeSI6ImFmbGQiLCJpYXQiOjE1Njc0NDk3MjB9.56-1ZDcZFw3RnrlM2K2dlYZQH_aw4cR1j8hEat8zbeI';    
+    const context = {
+      "peakPower": "1200"
+    };
+    supertest(app)
+      .post('/api/cycling/test/sixsec')
+      .set('Authorization', `Bearer ${token}`)
+      .send(context)
+      .expect(200);
+  });
+
+});
