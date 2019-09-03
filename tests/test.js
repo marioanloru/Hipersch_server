@@ -8,6 +8,7 @@ const memoryServer = require('mongodb-memory-server');
 const mongoose = require('mongoose');
 const assert = require('assert');
 const supertest = require('supertest');
+const async = require('async');
 //const app = require('../src/index');
 const uuidv4 = require('uuid4');
 
@@ -16,6 +17,7 @@ const mathUtils = require('../src/api/utils/mathUtils');
 const runningUtils = require('../src/api/utils/runningUtils');
 const bcrypt = require('bcryptjs');
 
+const initializeUtils = require('../scripts/utils');
 const UserModel = require('../src/api/models/user');
 const RunningTestModel = require('../src/api/models/runningTest');
 const app = require('../src/index');
@@ -60,6 +62,9 @@ describe('Math utils tests', () => {
   });
 });
 
+const runningTestId1 = uuidv4();
+const runningTestId2 = uuidv4();
+
 //  Tests de integración
 before(done => {
   mongoose.connection.collections.users.drop(() => {
@@ -83,7 +88,7 @@ before(done => {
         MAVvVo2max: 7.33,
         vo2max: 7.33,
         vat: 7.33,
-        testId: uuidv4()
+        testId: runningTestId1
       });
   
       const runningTest2 = new RunningTestModel({
@@ -93,12 +98,52 @@ before(done => {
         MAVvVo2max: 6.33,
         vo2max: 8.33,
         vat: 7.33,
-        testId: uuidv4()
+        testId: runningTestId2
       });
 
       runningTest.save((testError, newTest) => {
         runningTest2.save((testError2, newTest2) => {
-          done();
+          async
+            .parallel([
+              (callback) => {
+                initializeUtils.initializeRunningTable((err, res) => {
+                  if (err) {
+                    callback(err);
+                  } else {
+                    callback(null, res);
+                  }
+                });
+              },
+              (callback) => {
+                initializeUtils.initializeCyclingTable((err, res) => {
+                  if (err) {
+                    callback(err);
+                  } else {
+                    callback(null, res);
+                  }
+                });
+              },
+              (callback) => {
+                initializeUtils.initializeCyclingPeakTable((err, res) => {
+                  if (err) {
+                    callback(err);
+                  } else {
+                    callback(null, res);
+                  }
+                });
+              },
+              (callback) => {
+                initializeUtils.initializeSwimmingTable((err, res) => {
+                  if (err) {
+                    callback(err);
+                  } else {
+                    callback(null, res);
+                  }
+                });
+              }
+            ], (err, res) => {
+              done();
+            });
         })
       });
     });
@@ -107,7 +152,16 @@ before(done => {
 
 describe('REST API tests', () => {
   let token = '';
-  it('User authentication', (done) => {
+  it('Check API status', () => {
+    supertest(app)
+      .get('/api/status')
+      .expect(200)
+      .then(response => {
+        assert.equal(response.body.message, 'Everything up and working');
+      });
+  });
+
+  it('User authentication', () => {
     const context = {
       email: 'testemail@hotmail.com',
       password: 'password'
@@ -115,15 +169,66 @@ describe('REST API tests', () => {
     supertest(app)
       .post('/api/user/login')
       .send(context)
-      .expect('Content-type', /json/)
       .expect(200)
       .then(response => {
         token = response.body.token;
-        done();
       });
   });
 
-  it('User register', (done) => {
+  /*it('User authentication failure', () => {
+    const context = {
+      email: 'testemassssasdasdadsil@hotmail.com',
+      password: 'password'
+    };
+    supertest(app)
+      .post('/api/user/login')
+      .expect(500)
+      .then(response => {
+        assert.equal(response.body.message, 'Login credentials incorrect');
+      });
+  });*/
+
+  it('User register', () => {
+    const context = {
+      email: 'testregister@hotmail.com',
+      password: 'password',
+      lastName: "test", 
+      firstName: "test",
+      gender: "male",
+      bodyWeight: "72",
+      height: "170",
+      swimmingCategory: "jms",
+      role: "athlete"
+    };
+    supertest(app)
+      .post('/api/user/register')
+      .send(context)
+      .expect(200)
+      .then(response => {
+      });
+  });
+
+  it('User register failure', () => {
+    const context = {
+      email: 'testregisttterrrr@hotmail.com',
+      password: 'password',
+      lastName: "test", 
+      firstName: "test",
+      gender: "male",
+      bodyWeight: "72",
+      height: "170",
+      role: "athlete"
+    };
+    supertest(app)
+      .post('/api/user/register')
+      .send(context)
+      .expect(400)
+      .then(response => {
+        assert.equal(response.body.message, 'Swiming category is needed');
+      });
+  });
+
+  it('User register on existing user failure', () => {
     const context = {
       email: 'testregister@hotmail.com',
       password: 'password',
@@ -138,35 +243,32 @@ describe('REST API tests', () => {
     supertest(app)
       .post('/api/user/register')
       .send(context)
-      .expect('Content-type', /json/)
       .expect(200)
       .then(response => {
-        done();
+        assert.equal(response.body.message, 'User already created');
       });
   });
 
-
-  it('Get user data', (done) => {
+  it('Get user data', () => {
+    const token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InRlc3RlbWFpbEBob3RtYWlsLmNvbSIsImdlbmRlciI6Im1hbGUiLCJyb2xlIjoiYXRobGV0ZSIsInVzZXJJZCI6IjVkNmQ2Mjc4ZDA3MTgwM2VjYjQ0NzQwOSIsImJvZHlXZWlnaHQiOjcyLCJoZWlnaHQiOjE3MCwic3dpbW1pbmdDYXRlZ29yeSI6ImFmbGQiLCJpYXQiOjE1Njc0NDk3MjB9.56-1ZDcZFw3RnrlM2K2dlYZQH_aw4cR1j8hEat8zbeI';
     supertest(app)
       .get('/api/user/data')
-      .expect('Content-type', /json/)
       .set('Authorization', `Bearer ${token}`)
       .expect(200)
       .then(response => {
         assert.equal(response.body.height, "170");
         assert.equal(response.body.bodyWeight, "72");
-        done();
       });
   });
 
   it('Update user data', () => {
+    const token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InRlc3RlbWFpbEBob3RtYWlsLmNvbSIsImdlbmRlciI6Im1hbGUiLCJyb2xlIjoiYXRobGV0ZSIsInVzZXJJZCI6IjVkNmQ2Mjc4ZDA3MTgwM2VjYjQ0NzQwOSIsImJvZHlXZWlnaHQiOjcyLCJoZWlnaHQiOjE3MCwic3dpbW1pbmdDYXRlZ29yeSI6ImFmbGQiLCJpYXQiOjE1Njc0NDk3MjB9.56-1ZDcZFw3RnrlM2K2dlYZQH_aw4cR1j8hEat8zbeI';
     let context = {
       height: "160",
       bodyWeight: "65"      
     };
     supertest(app)
       .post('/api/user/data')
-      .expect('Content-type', /json/)
       .set('Authorization', `Bearer ${token}`)
       .expect(200)
       .then(response => {
@@ -174,156 +276,87 @@ describe('REST API tests', () => {
       });
   });
 
-  /*describe('Running tests', () => {
-    console.log("running tests!!");
-  
-    it('Check get user tests', (done) => {
-      console.log('El token que se envia -----------> ', token);
-      supertest(app)
-        .get('/api/running/test')
-        .set('Authorization', `Bearer ${token}`)
-        .expect('Content-type', /json/)
-        .expect(200)
-        .then(response => {
-          console.log('Respuesta ----> ', response);
-          assert.equal(response[0], runningTest);
-          assert.equal(response[1], runningTest2);
-          done();
-        });
-    });
-    it('Check get training zone ', (done) => {
-      console.log('El token que se envia -----------> ', token);
-      supertest(app)
-        .get('/api/running/trainingZone')
-        .set('Authorization', `Bearer ${token}`)
-        .expect('Content-type', /json/)
-        .expect(200)
-        .then(response => {
-          console.log('Respuesta ----> ', response);
-          //assert.equal(response[0], runningTest);
-          done();
-        });
-    });
-  });*/
-});
-
-
-
-
-//  User api tests [TO DO]
-/*describe('User tests', () => {
-  //  Get test admin token
-  /*before((done) => {
-    request('localhost:9000')
-      .post('/api/user/login')
-      .send({ username: 'admin', password: 'admin' })
-      .end((err, res) => {
-        adminToken = res.body.token;
-        done(); 
-      });
-    });*/
-  
-  //  User creation
-  /*it('Check user register', (done) => {
-    const context = {
-      "username": "mujer",
-      "password": "finisterre",
-      "firstName": "unamujer",
-      "lastName": "muymujer",
-      "gender": "female",
-      "bodyWeight": "73",
-      "height": "154",
-      "role": "user"
-    };
-    supertest(app)
-      .post('/api/user/register')
-      .send(context)
-      .expect('Content-type', /json/)
-      .expect(200, {
-        message: 'User created'
-      }, done);
-  });
-
-  //  User already exists
-  it('Check user already exists', (done) => {
-    const context = {
-      "username": "mujer",
-      "password": "finisterre",
-      "firstName": "unamujer",
-      "lastName": "muymujer",
-      "gender": "female",
-      "bodyWeight": "52",
-      "height": "163",
-      "role": "user"
-    };
-    supertest(app)
-      .post('/api/user/register')
-      .send(context)
-      .expect('Content-type', /json/)
-      .expect(200, {
-        message: 'User already created'
-      }, done);
-  });
-
-  //  User admin creation error
-  it('Check user register', (done) => {
-    const context = {
-      "username": "testAdmin",
-      "password": "finisterre",
-      "firstName": "unamujer",
-      "lastName": "muymujer",
-      "gender": "female",
-      "bodyWeight": "73",
-      "height": "154",
-      "role": "admin"
-    };
-    supertest(app)
-      .post('/api/user/register')
-      .send(context)
-      .expect('Content-type', /json/)
-      .expect(200, {
-        message: 'User created'
-      }, done);
-  });
-  //  User delete
-  it('Check user delete', (done) => {
-    const context = {
-      "username": "mujer"
-    };
-    supertest(app)
-      .post('/api/user/delete')
-      .set('Authorization', 'Bearer' + adminToken)
-      .send(context)
-      .expect('Content-type', /json/)
-      .expect(200, {
-        message: 'User deleted'
-      }, done);
-  });
-  //  User delete failure on non existing user
-  it('Check user failure on non existing user', (done) => {
-    const context = {
-      "username": "thisuserdoesnotexist"
-    };
-    supertest(app)
-      .post('/api/user/delete')
-      .set('Authorization', 'Bearer' + adminToken)
-      .send(context)
-      .expect('Content-type', /json/)
-      .expect(400, {
-        message: 'Could not delete user'
-      }, done);
-  });
   //  User delete failure beacuse of permission lack
-  it('Check user failure beacuse of permission lack', (done) => {
+  it('Check user unauthorized failure', (done) => {
     const context = {
-      "username": "mujer"
+      "email": "unexistingemail@hotmail.com"
     };
     supertest(app)
       .post('/api/user/delete')
+      .set('Authorization', `Bearer ${token}`)
       .send(context)
-      .expect('Content-type', /json/)
-      .expect(400, {
+      .expect(401, {
         message: 'You do not have permissions for this action. This action will be reported'
       }, done);
   });
-});*/
+
+  it('Delete user test', () => {
+    const context = {
+      email: 'testemail@hotmail.com',
+      password: 'password'
+    };
+
+    RunningTestModel
+      .findOne({ testId: runningTestId1 })
+      .exec((err, data) => {
+        supertest(app)
+          .post(`/api/running/test/${runningTestId1}`)
+          .set('Authorization', `Bearer ${token}`)
+          .send(context)
+          .expect(200)
+          .then(response => {
+            assert.equal(response.body.message, 'Test deleted. ');
+          });
+      });
+  });
+
+  it('Delete running test failure', () => {
+    const token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InRlc3RlbWFpbEBob3RtYWlsLmNvbSIsImdlbmRlciI6Im1hbGUiLCJyb2xlIjoiYXRobGV0ZSIsInVzZXJJZCI6IjVkNmQ2Mjc4ZDA3MTgwM2VjYjQ0NzQwOSIsImJvZHlXZWlnaHQiOjcyLCJoZWlnaHQiOjE3MCwic3dpbW1pbmdDYXRlZ29yeSI6ImFmbGQiLCJpYXQiOjE1Njc0NDk3MjB9.56-1ZDcZFw3RnrlM2K2dlYZQH_aw4cR1j8hEat8zbeI';
+    RunningTestModel
+      .findOne({ testId: uuidv4() })
+      .exec((err, data) => {
+        supertest(app)
+          .post(`/api/running/test/${uuidv4()}`)
+          .set('Authorization', `Bearer ${token}`)
+          .expect(404);
+      });
+  });
+  
+  it('Insert Swimming test', () => {
+    const token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InRlc3RlbWFpbEBob3RtYWlsLmNvbSIsImdlbmRlciI6Im1hbGUiLCJyb2xlIjoiYXRobGV0ZSIsInVzZXJJZCI6IjVkNmQ2Mjc4ZDA3MTgwM2VjYjQ0NzQwOSIsImJvZHlXZWlnaHQiOjcyLCJoZWlnaHQiOjE3MCwic3dpbW1pbmdDYXRlZ29yeSI6ImFmbGQiLCJpYXQiOjE1Njc0NDk3MjB9.56-1ZDcZFw3RnrlM2K2dlYZQH_aw4cR1j8hEat8zbeI';    
+    const context = {
+      "timeFourHundred": "755",
+      "timeTwoHundred": "377"
+    };
+    supertest(app)
+      .post('/api/swimming/test')
+      .set('Authorization', `Bearer ${token}`)
+      .send(context)
+      .expect(200);
+  });
+
+  it('Insert Running test', () => {
+    const token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InRlc3RlbWFpbEBob3RtYWlsLmNvbSIsImdlbmRlciI6Im1hbGUiLCJyb2xlIjoiYXRobGV0ZSIsInVzZXJJZCI6IjVkNmQ2Mjc4ZDA3MTgwM2VjYjQ0NzQwOSIsImJvZHlXZWlnaHQiOjcyLCJoZWlnaHQiOjE3MCwic3dpbW1pbmdDYXRlZ29yeSI6ImFmbGQiLCJpYXQiOjE1Njc0NDk3MjB9.56-1ZDcZFw3RnrlM2K2dlYZQH_aw4cR1j8hEat8zbeI';    
+    const context = {
+      "distance": "1800"
+    };
+    supertest(app)
+      .post('/api/running/test')
+      .set('Authorization', `Bearer ${token}`)
+      .send(context)
+      .expect(200);
+  });
+
+  it('Insert Cycling test', () => {
+    const token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InRlc3RlbWFpbEBob3RtYWlsLmNvbSIsImdlbmRlciI6Im1hbGUiLCJyb2xlIjoiYXRobGV0ZSIsInVzZXJJZCI6IjVkNmQ2Mjc4ZDA3MTgwM2VjYjQ0NzQwOSIsImJvZHlXZWlnaHQiOjcyLCJoZWlnaHQiOjE3MCwic3dpbW1pbmdDYXRlZ29yeSI6ImFmbGQiLCJpYXQiOjE1Njc0NDk3MjB9.56-1ZDcZFw3RnrlM2K2dlYZQH_aw4cR1j8hEat8zbeI';    
+    const context = {
+      "peakPower": "1200"
+    };
+    supertest(app)
+      .post('/api/cycling/test/sixsec')
+      .set('Authorization', `Bearer ${token}`)
+      .send(context)
+      .expect(200);
+  });
+
+});
